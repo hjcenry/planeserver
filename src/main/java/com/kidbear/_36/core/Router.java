@@ -1,4 +1,4 @@
-package com.kidbear._36.net;
+package com.kidbear._36.core;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -7,6 +7,9 @@ import io.netty.channel.ChannelHandlerContext;
 import net.sf.json.JSONObject;
 
 import com.kidbear._36.manager.AccountMgr;
+import com.kidbear._36.net.ProtoIds;
+import com.kidbear._36.net.ProtoMessage;
+import com.kidbear._36.net.SocketHandler;
 import com.kidbear._36.net.message.TestReq;
 import com.kidbear._36.util.JsonUtils;
 
@@ -67,7 +70,9 @@ public class Router {
 		logger.info("收到客户端的测试消息:");
 		logger.info("id:" + msg.getProtoId());
 		logger.info("msg:" + JsonUtils.objectToJson(msg.getMsg(TestReq.class)));
-		ProtoMessage message = new ProtoMessage(ProtoIds.C_TEST, "服务器收到测试消息");
+		JSONObject object = new JSONObject();
+		object.put("msg", "服务器收到测试消息");
+		ProtoMessage message = new ProtoMessage(ProtoIds.C_TEST, object);
 		SocketHandler.writeJSON(ctx, message);
 	}
 }

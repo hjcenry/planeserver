@@ -15,47 +15,48 @@ import com.kidbear._36.util.JsonUtils;
 public class SocketTest {
 
 	public static void main(String[] args) {
-		int N = 1000;
+		int N = 1500;
 
-		// for (int i = 0; i < N; i++) {
-		new Thread(new Runnable() {
+		for (int i = 0; i < N; i++) {
+			new Thread(new Runnable() {
 
-			@Override
-			public void run() {
-				try {
-					// socket = new Socket("123.59.139.220", 8586);
-					// Socket socket = new Socket("123.59.139.220", 8586);
-					Socket socket = new Socket("localhost", 8586);
-					OutputStream outputStream = socket.getOutputStream();
+				@Override
+				public void run() {
+					try {
+						// socket = new Socket("123.59.139.220", 8586);
+						Socket socket = new Socket("123.59.139.220", 8586);
+						// Socket socket = new Socket("localhost", 8586);
+						OutputStream outputStream = socket.getOutputStream();
+						ProtoMessage protoMessage = new ProtoMessage();
+						protoMessage.setProtoId(ProtoIds.C_TEST);
+						TestReq req = new TestReq();
+						req.setErrMsg("客户端测试消息");
+						req.setName("hjc");
+						req.setAttack(214000136);
+						req.setDefend(51200000);
+						req.setHealth(100000);
+						protoMessage.setMsg(req);
 
-					ProtoMessage protoMessage = new ProtoMessage();
-					protoMessage.setProtoId(ProtoIds.C_TEST);
-					TestReq req = new TestReq();
-					req.setErrMsg("客户端测试消息");
-					req.setName("hjc");
-					req.setAttack(214000136);
-					req.setDefend(51200000);
-					req.setHealth(100000);
-					protoMessage.setMsg(req);
-
-					outputStream.write(JsonUtils.objectToJson(protoMessage)
-							.getBytes());
-					outputStream.flush();
-					while (true) {
+						long start = System.currentTimeMillis();
+						outputStream.write(JsonUtils.objectToJson(protoMessage)
+								.getBytes());
+						outputStream.flush();
+						// while (true) {
 						InputStream is = socket.getInputStream();
 						byte[] bytes = new byte[1024];
 						int n = is.read(bytes);
-						System.out.println(new String(bytes, 0, n));
+						System.out.println(new String(bytes, 0, n) + ",during"
+								+ (System.currentTimeMillis() - start));
 						// is.close();
 						// socket.close();
+						// }
+					} catch (UnknownHostException e) {
+						e.printStackTrace();
+					} catch (IOException e) {
+						e.printStackTrace();
 					}
-				} catch (UnknownHostException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
 				}
-			}
-		}).start();
-		// }
+			}).start();
+		}
 	}
 }

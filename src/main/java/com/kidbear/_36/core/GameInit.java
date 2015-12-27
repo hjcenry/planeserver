@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.kidbear._36.net.ChannelMgr;
-import com.kidbear._36.net.Router;
 import com.kidbear._36.notification.ServerNotify;
 import com.kidbear._36.util.Config;
 import com.kidbear._36.util.ThreadViewer;

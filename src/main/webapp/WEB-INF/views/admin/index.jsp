@@ -42,12 +42,17 @@
 	<div class="main">
 		<div class="left">
 			<ul class="page-sidebar-menu">
-				<li>
-					<a href="#"><i class="fa fa-table"></i><span>活动管理</span><span class="arrow"></span></a>
+				<li><a href="#"><i class="fa fa-table"></i><span>活动管理</span><span
+						class="arrow"></span></a>
 					<ul class="sub-menu">
-						<li><a href="#" onclick="javascript:skip('../activity/cdkey')">活动码</a></li>
-					</ul>
-				</li>
+						<li><a href="#"
+							onclick="javascript:skip('../activity/cdkey')">活动码</a></li>
+					</ul></li>
+				<li><a href="#"><i class="fa fa-table"></i><span>日志管理</span><span
+						class="arrow"></span></a>
+					<ul class="sub-menu">
+						<li><a href="#" onclick="javascript:skip('../log/logConfig')">日志配置</a></li>
+					</ul></li>
 				<li><a href="#"><i class="fa fa-table"></i><span>账号管理</span><span
 						class="arrow"></span></a>
 					<ul class="sub-menu">

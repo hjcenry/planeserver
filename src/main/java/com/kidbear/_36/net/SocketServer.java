@@ -25,6 +25,7 @@ import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 public class SocketServer {
 	public static Logger log = LoggerFactory.getLogger(SocketServer.class);
@@ -33,6 +34,20 @@ public class SocketServer {
 	public static int port;
 	private NioEventLoopGroup bossGroup = new NioEventLoopGroup();
 	private NioEventLoopGroup workGroup = new NioEventLoopGroup();
+	public static ThreadPoolTaskExecutor handleTaskExecutor;// 处理消息线程池
+
+	private SocketServer() {
+		handleTaskExecutor = new ThreadPoolTaskExecutor();
+		// 线程池所使用的缓冲队列
+		handleTaskExecutor.setQueueCapacity(200);
+		// 线程池维护线程的最少数量
+		handleTaskExecutor.setCorePoolSize(10);
+		// 线程池维护线程的最大数量
+		handleTaskExecutor.setMaxPoolSize(1000);
+		// 线程池维护线程所允许的空闲时间
+		handleTaskExecutor.setKeepAliveSeconds(300);
+		handleTaskExecutor.initialize();
+	}
 
 	public static SocketServer getInstance() {
 		if (inst == null) {
