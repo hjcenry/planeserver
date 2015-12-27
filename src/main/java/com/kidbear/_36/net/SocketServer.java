@@ -37,15 +37,28 @@ public class SocketServer {
 	public static ThreadPoolTaskExecutor handleTaskExecutor;// 处理消息线程池
 
 	private SocketServer() {
+	}
+
+	/** 
+	* @Title: initThreadPool 
+	* @Description: 初始化线程池
+	* void
+	* @throws 
+	*/
+	public void initThreadPool() {
 		handleTaskExecutor = new ThreadPoolTaskExecutor();
 		// 线程池所使用的缓冲队列
-		handleTaskExecutor.setQueueCapacity(200);
+		handleTaskExecutor.setQueueCapacity(Integer.parseInt(p
+				.getProperty("handleTaskQueueCapacity")));
 		// 线程池维护线程的最少数量
-		handleTaskExecutor.setCorePoolSize(10);
+		handleTaskExecutor.setCorePoolSize(Integer.parseInt(p
+				.getProperty("handleTaskCorePoolSize")));
 		// 线程池维护线程的最大数量
-		handleTaskExecutor.setMaxPoolSize(1000);
+		handleTaskExecutor.setMaxPoolSize(Integer.parseInt(p
+				.getProperty("handleTaskMaxPoolSize")));
 		// 线程池维护线程所允许的空闲时间
-		handleTaskExecutor.setKeepAliveSeconds(300);
+		handleTaskExecutor.setKeepAliveSeconds(Integer.parseInt(p
+				.getProperty("handleTaskKeepAliveSeconds")));
 		handleTaskExecutor.initialize();
 	}
 
@@ -53,6 +66,7 @@ public class SocketServer {
 		if (inst == null) {
 			inst = new SocketServer();
 			inst.initData();
+			inst.initThreadPool();
 		}
 		return inst;
 	}
