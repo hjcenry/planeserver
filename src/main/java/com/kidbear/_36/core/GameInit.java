@@ -4,14 +4,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.kidbear._36.net.ChannelMgr;
-import com.kidbear._36.notification.ServerNotify;
 import com.kidbear._36.util.Config;
 import com.kidbear._36.util.ThreadViewer;
+import com.kidbear._36.util.csv.CsvDataLoader;
 import com.kidbear._36.util.hibernate.HibernateUtil;
 import com.kidbear._36.util.memcached.MemcachedCRUD;
 import com.kidbear._36.util.redis.Redis;
 import com.kidbear._36.util.sensitive.SensitiveFilter;
-import com.kidbear._36.util.xml.DataLoader;
 
 /**
  * @ClassName: GameInit
@@ -22,7 +21,7 @@ import com.kidbear._36.util.xml.DataLoader;
  */
 public class GameInit {
 	public static int serverId = 1; // 服务器标示
-	public static String confFileBasePath = "/";// 配置文件根目录
+	public static String confFileBasePath = "/csv/";// 配置文件根目录
 	public static Config cfg;// 读取server.properties配置
 	public static String templatePacket = "com.kidbear._36.template.";// xml模板类的位置
 	public static String dataConfig = "/dataConfig.xml";// xml位置
@@ -37,7 +36,7 @@ public class GameInit {
 			confInit();
 			// 加载XML数据
 			logger.info("加载数据配置");
-			new DataLoader(templatePacket, dataConfig).load();
+			new CsvDataLoader(templatePacket, dataConfig).load();
 			// 加载敏感词语
 			logger.info("加载敏感词语");
 			SensitiveFilter.getInstance();
@@ -69,7 +68,7 @@ public class GameInit {
 			}).start();
 			// 加载hibernate
 			logger.info("加载hibernate");
-			HibernateUtil.buildSessionFactory();
+			HibernateUtil.init();
 			// 初始化消息路由和系统模块
 			logger.info("初始化消息路由和系统模块");
 			Router.getInstance().initData();
@@ -108,7 +107,7 @@ public class GameInit {
 		logger.info("关闭redis连接");
 		Redis.destroy();
 		logger.info("关闭memcached连接");
-		MemcachedCRUD.destory();
+		MemcachedCRUD.getInstance().destroy();
 		// 关闭逻辑服务器
 		logger.info("关闭逻辑服务器");
 		GameServer.getInstance().shutServer();

@@ -2,11 +2,15 @@ package com.kidbear._36.util.memcached;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
+import net.spy.memcached.ConnectionFactoryBuilder;
+import net.spy.memcached.ConnectionFactoryBuilder.Protocol;
 import net.spy.memcached.MemcachedClient;
 
 import org.apache.commons.lang3.StringUtils;
@@ -21,7 +25,7 @@ import com.kidbear._36.core.GameInit;
  * 
  * 未提供封装的函数可直接调用getClient()取出Spy的原版MemcachedClient来使用.
  * 
- * @author calvin
+ * @author 何金成
  */
 public class MemcachedCRUD implements DisposableBean {
 
@@ -46,16 +50,17 @@ public class MemcachedCRUD implements DisposableBean {
 		// String cacheServer = "123.57.211.130:11211";
 		String host = cacheServer.split(":")[0];
 		int port = Integer.parseInt(cacheServer.split(":")[1]);
+		List<InetSocketAddress> addrs = new ArrayList<InetSocketAddress>();
+		addrs.add(new InetSocketAddress(host, port));
 		try {
-			memcachedClient = new MemcachedClient(new InetSocketAddress(host,
-					port));
+			ConnectionFactoryBuilder builder = new ConnectionFactoryBuilder();
+			builder.setProtocol(Protocol.BINARY);
+			builder.setOpTimeout(60000);
+			memcachedClient = new MemcachedClient(builder.build(), addrs);
+			logger.info("Memcached at {}:{}", host, port);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}
-
-	public static void destory() {
-		getInstance().memcachedClient.shutdown();
 	}
 
 	/**
@@ -162,7 +167,7 @@ public class MemcachedCRUD implements DisposableBean {
 	}
 
 	@Override
-	public void destroy() throws Exception {
+	public void destroy() {
 		if (memcachedClient != null) {
 			memcachedClient.shutdown(shutdownTimeout, TimeUnit.MILLISECONDS);
 		}

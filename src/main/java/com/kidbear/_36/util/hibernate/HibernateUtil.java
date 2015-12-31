@@ -28,7 +28,11 @@ public class HibernateUtil {
 	public static boolean showMCHitLog = false;
 	public static Logger log = LoggerFactory.getLogger(HibernateUtil.class);
 	public static Map<Class<?>, String> beanKeyMap = new HashMap<Class<?>, String>();
-	private static SessionFactory sessionFactory = buildSessionFactory();
+	private static SessionFactory sessionFactory;
+
+	public static void init() {
+		sessionFactory = buildSessionFactory();
+	}
 
 	public static SessionFactory getSessionFactory() {
 		return sessionFactory;

@@ -1,19 +1,20 @@
-package com.kidbear._36.util.xml;
+package com.kidbear._36.util.csv;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * 添加一个模板表需要做以下几步 
- * 1.在包com.hjczb.war.main.template下创建对应的模板类 
- * 2.在resources/data/中添加模板数据文件
- * 3.在resources/dataConfig.xml加入刚才的模板数据文件
+ * 添加一个数据表需要做以下几步 
+ * 1.在包com.kidbear._36.template下创建对应的模板类，类名与数据文件一致 
+ * 2.在src/main/resources/csv/中添加模板数据文件
+ * 3.在src/main/resources/dataConfig.xml加入刚才的模板数据文件
  * 
- * @author ranbo
+ * @author 何金成
  * 
  */
 public class TempletService {
@@ -69,6 +70,21 @@ public class TempletService {
 	
 	public void afterLoad() {
 		// 加载后处理
+		// List tests = TempletService.listAll(Test.class.getSimpleName());
+		// for (Object object : tests) {
+		// Test test = (Test)object;
+		// System.out.print(test.getEquipLv());
+		// System.out.print(","+test.getLv1());
+		// System.out.print(","+test.getLv2());
+		// System.out.print(","+test.getLv3());
+		// System.out.print(","+test.getLv4());
+		// System.out.print(","+test.getLv5());
+		// System.out.print(","+test.getLv6());
+		// System.out.print(","+test.getLv7());
+		// System.out.print(","+test.getLv8());
+		// System.out.print(","+test.getLv9());
+		// System.out.println(","+test.getLv10());
+		// }
 	}
 
 	public void loadCanShu() {

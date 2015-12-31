@@ -1,8 +1,8 @@
-package com.kidbear._36.util.xml;
+package com.kidbear._36.util.csv;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.sql.Timestamp;
@@ -22,20 +22,13 @@ import org.slf4j.LoggerFactory;
 
 import com.kidbear._36.core.GameInit;
 
-/**
- * 1 所有的template类都必须在一个包中 2 通过读取xml 遍历所有的Element，通过Element.name和 package 得到具体的
- * className; 3 通过Element的 attr 获取方法，并且根据parameterType 强制转换类型
- * 
- * @author Administrator
- * 
- */
-public class DataLoader {
+public class CsvDataLoader {
+	public static Logger logger = LoggerFactory.getLogger(CsvDataLoader.class);
 	private String packageName;
 	private String config; // 每一行就是一个配置文件名字
-	private static Logger logger = LoggerFactory.getLogger(DataLoader.class);
 	public static int ActivityMaxValue;
 
-	public DataLoader(String packageName, String config) {
+	public CsvDataLoader(String packageName, String config) {
 		this.packageName = packageName;
 		this.config = config;
 	}
@@ -71,8 +64,9 @@ public class DataLoader {
 		}
 	}
 
-	private List<?> loadFile(String file, boolean exitWhenFail) {
+	private List<?> loadFile(String file, boolean exitWhenFail) {// 读文件
 		try {
+			String clzName = file.replaceAll(".csv", "");
 			file = GameInit.confFileBasePath + file;
 			logger.info("load file: {}", file);
 			InputStream resourceAsStream = this.getClass().getResourceAsStream(
@@ -84,7 +78,7 @@ public class DataLoader {
 				}
 				return null;
 			}
-			return loadFromStream(resourceAsStream);
+			return loadFromStream(resourceAsStream, clzName);
 		} catch (Exception e) {
 			logger.error("载入文件出错：" + file);
 			e.printStackTrace();
@@ -94,17 +88,13 @@ public class DataLoader {
 		return Collections.EMPTY_LIST;
 	}
 
-	public List<?> loadFromStream(InputStream resourceAsStream)
-			throws UnsupportedEncodingException, DocumentException,
-			InstantiationException, IllegalAccessException {
-		SAXReader reader = new SAXReader();
-		Document doc = reader.read(new InputStreamReader(resourceAsStream,
-				"utf-8"));
-		Element dataSet = (Element) doc.selectNodes("/dataset").get(0);
-		List<?> nodes = dataSet.elements();
+	public List<?> loadFromStream(InputStream resourceAsStream, String clzName)
+			throws DocumentException, InstantiationException,
+			IllegalAccessException, IOException {// 读csv文件
+		CsvParser csvParser = new CsvParser(resourceAsStream);
+		List<String> nodes = csvParser.getListWithNoHeader();
 		// get clazz
-		String className = this.packageName
-				+ ((Element) nodes.get(0)).getName();
+		String className = this.packageName + clzName;
 		try {
 			Class<?> classObject = Class.forName(className);
 			if (classObject == null) {
@@ -151,14 +141,16 @@ public class DataLoader {
 			Object instance = null;
 			String fieldName = null;
 			String fieldValue = null;
-			for (Object node : nodes) {
+			for (String node : nodes) {
 				if (node != null) {
 					instance = classObject.newInstance();
 					boolean ok = false;
-					Element row = (Element) node;
-					for (Field field : fieldList) {
+					// Element row = (Element) node;
+					String[] values = node.split(",");// csv文件以英文逗号分割值
+					for (int i = 0; i < fieldList.size(); i++) {
+						Field field = fieldList.get(i);
 						fieldName = field.getName();
-						fieldValue = row.attributeValue(fieldName);
+						fieldValue = values[i];
 						if (fieldValue == null)
 							continue;
 						try {
@@ -170,8 +162,9 @@ public class DataLoader {
 							continue;
 						}
 					}
-					if (ok)
+					if (ok) {
 						instances.add(instance);
+					}
 				}
 			}
 			return instances;
@@ -180,9 +173,6 @@ public class DataLoader {
 			logger.error("未找到类" + className);
 			return null;
 		}
-	}
-
-	public void reload() {
 	}
 
 	/**
@@ -223,9 +213,8 @@ public class DataLoader {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		DataLoader dl = new DataLoader("com.kidbear._36.template.",
+		CsvDataLoader dl = new CsvDataLoader("com.kidbear._36.template.",
 				"/dataConfig.xml");
 		dl.load();
 	}
-
 }
