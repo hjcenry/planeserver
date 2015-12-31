@@ -2,8 +2,11 @@ package com.kidbear._36.notification;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.RequestMapping;
+
 import com.alibaba.druid.support.json.JSONUtils;
 import com.kidbear._36.core.GameInit;
 import com.kidbear._36.notification.message.ServerReq;
@@ -96,5 +99,37 @@ public class ServerNotify {
 			logger.info("无法连接登录服务器 {}", url);
 			return false;
 		}
+	}
+
+	/**
+	 * @Title: validateLogin
+	 * @Description: 验证账号是否登录
+	 * @param accId
+	 *            void
+	 * @throws
+	 */
+	public static boolean validateLogin(int accId) {
+		String url = baseUrl + "changestate";
+		Map<String, String> param = new HashMap<String, String>();
+		// request message
+		ServerReq req = new ServerReq();
+		req.setServerId(accId);
+		param.put("data", JSONUtils.toJSONString(req));
+		String result = HttpClient.get(url, param);
+		// response message
+		ServerResp resp = (ServerResp) JsonUtils.jsonToBean(result,
+				ServerResp.class);
+		if (null != result && !result.equals("")) {
+			logger.info("登录服务器收到登录验证消息 {},{}", url, resp.getResult());
+			if (resp.getCode() == 100) {
+				logger.info("账号 {} 登录成功", accId);
+				return true;
+			} else {
+				logger.error(resp.getResult());
+			}
+		} else {
+			logger.info("无法连接登录服务器 {}", url);
+		}
+		return false;
 	}
 }

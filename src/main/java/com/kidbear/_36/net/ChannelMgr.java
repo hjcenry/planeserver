@@ -87,7 +87,7 @@ public class ChannelMgr {
 				ChannelUser u = it.next();
 				if (u.ctx.equals(ctx)) {
 					it.remove();
-					u.ctx.close();
+					ctx.close();
 				}
 			}
 		}

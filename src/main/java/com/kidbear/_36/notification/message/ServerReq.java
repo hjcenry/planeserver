@@ -3,6 +3,7 @@ package com.kidbear._36.notification.message;
 public class ServerReq {
 	private int serverId;
 	private int state;
+	private int accId;
 
 	public int getServerId() {
 		return serverId;
@@ -18,6 +19,14 @@ public class ServerReq {
 
 	public void setState(int state) {
 		this.state = state;
+	}
+
+	public int getAccId() {
+		return accId;
+	}
+
+	public void setAccId(int accId) {
+		this.accId = accId;
 	}
 
 }

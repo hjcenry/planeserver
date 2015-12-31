@@ -1,4 +1,4 @@
-package com.kidbear._36.manager;
+package com.kidbear._36.manager.account;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;

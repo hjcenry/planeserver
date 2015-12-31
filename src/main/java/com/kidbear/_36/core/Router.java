@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import io.netty.channel.ChannelHandlerContext;
 import net.sf.json.JSONObject;
 
-import com.kidbear._36.manager.AccountMgr;
+import com.kidbear._36.manager.account.AccountMgr;
 import com.kidbear._36.net.ProtoIds;
 import com.kidbear._36.net.ProtoMessage;
 import com.kidbear._36.net.SocketHandler;
