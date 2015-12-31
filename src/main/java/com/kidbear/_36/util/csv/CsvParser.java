@@ -16,11 +16,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import au.com.bytecode.opencsv.CSVReader;
-import au.com.bytecode.opencsv.bean.ColumnPositionMappingStrategy;
-import au.com.bytecode.opencsv.bean.CsvToBean;
-import au.com.bytecode.opencsv.bean.HeaderColumnNameMappingStrategy;
-
 //JAVA 操作 excel 中的 .csv文件格式
 public class CsvParser {
 	private BufferedReader bufferedreader = null;
