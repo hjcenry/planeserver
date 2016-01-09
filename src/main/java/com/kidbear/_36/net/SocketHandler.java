@@ -24,6 +24,7 @@ public class SocketHandler extends ChannelHandlerAdapter {
 	@Override
 	public void disconnect(ChannelHandlerContext ctx, ChannelPromise promise)
 			throws Exception {
+		handler.disconnect(ctx, promise);
 	}
 
 	@Override

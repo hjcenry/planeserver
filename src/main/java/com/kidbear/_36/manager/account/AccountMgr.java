@@ -12,7 +12,6 @@ import com.kidbear._36.net.ProtoMessage;
 import com.kidbear._36.net.SocketHandler;
 import com.kidbear._36.net.message.LoginReq;
 import com.kidbear._36.net.message.LoginResp;
-import com.kidbear._36.notification.ServerNotify;
 
 /**
  * @ClassName: AccountMgr
@@ -51,26 +50,30 @@ public class AccountMgr {
 	 */
 	public void login(int cmd, LoginReq request, ChannelHandlerContext ctx) {
 		int accId = request.getAccId();
+		LoginResp resp = new LoginResp();
 		// 与router服务器通信验证是否登录
-		boolean flag = ServerNotify.validateLogin(accId);
-		if (flag) {
-			logger.error("登录服验证账号 {} 登录失败", accId);
-		}
+		// boolean flag = ServerNotify.validateLogin(accId);
+		// if (flag) {
+		// resp.setCode(1);
+		// resp.setErrMsg("登录服验证账号" + accId + " 登录验证失败");
+		// logger.error("登录服验证账号 {} 登录验证失败", accId);
+		// SocketHandler.writeJSON(ctx, resp);
+		// return;
+		// }
 		long junZhuId = accId * 1000 + GameInit.serverId;
 		logger.info("账号 {} 登录成功，君主id为 {}", accId, junZhuId);
 		// 玩家登录到本服务器，Channel进行记录
 		ChannelMgr.getInstance().addChannelUser(ctx, junZhuId);
 		// response
-		LoginResp response = new LoginResp();
-		response.setCode(0);
+		resp.setCode(0);
 		SocketHandler.writeJSON(ctx, new ProtoMessage(ProtoIds.S_LOGIN_RESP,
-				response));
+				resp));
 	}
 
 	/**
 	 * @Title: logout
 	 * @Description: 下线后的处理
-	 * @param session
+	 * @param ctx
 	 * @return void
 	 * @throws
 	 */

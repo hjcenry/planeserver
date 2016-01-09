@@ -14,7 +14,7 @@ import com.kidbear._36.util.JsonUtils;
 public class SocketTest {
 
 	public static void main(String[] args) {
-		int N = 1500;
+		int N = 1;
 
 		for (int i = 0; i < N; i++) {
 			new Thread(new Runnable() {
@@ -22,9 +22,8 @@ public class SocketTest {
 				@Override
 				public void run() {
 					try {
-						// socket = new Socket("123.59.139.220", 8586);
-						Socket socket = new Socket("123.59.139.220", 8586);
-						// Socket socket = new Socket("localhost", 8586);
+						// Socket socket = new Socket("123.59.139.220", 8586);
+						Socket socket = new Socket("localhost", 8586);
 						OutputStream outputStream = socket.getOutputStream();
 						ProtoMessage protoMessage = new ProtoMessage();
 						protoMessage.setProtoId(ProtoIds.C_TEST);

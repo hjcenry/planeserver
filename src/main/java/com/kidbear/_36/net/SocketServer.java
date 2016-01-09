@@ -8,6 +8,9 @@ import io.netty.channel.ChannelPipeline;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.string.StringDecoder;
+import io.netty.handler.codec.string.StringEncoder;
+import io.netty.util.CharsetUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -95,6 +98,8 @@ public class SocketServer {
 			@Override
 			protected void initChannel(SocketChannel ch) throws Exception {
 				ChannelPipeline pipeline = ch.pipeline();
+				pipeline.addLast(new StringDecoder(CharsetUtil.UTF_8));
+				pipeline.addLast(new StringEncoder(CharsetUtil.UTF_8));
 				// 业务逻辑处理
 				pipeline.addLast(new SocketHandler());
 			}

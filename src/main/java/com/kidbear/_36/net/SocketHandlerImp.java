@@ -3,6 +3,7 @@ package com.kidbear._36.net;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelPromise;
 import io.netty.util.CharsetUtil;
 import net.sf.json.JSONObject;
 
@@ -11,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import com.kidbear._36.core.GameServer;
 import com.kidbear._36.core.Router;
+import com.kidbear._36.manager.account.AccountMgr;
 import com.kidbear._36.util.Constants;
 import com.kidbear._36.util.JsonUtils;
 
@@ -59,6 +61,11 @@ public class SocketHandlerImp {
 			ctx.write(resp);
 			ctx.flush();
 		}
+	}
+
+	public void disconnect(ChannelHandlerContext ctx, ChannelPromise promise)
+			throws Exception {
+		AccountMgr.getInstance().logout(ctx);
 	}
 
 	public void messageReceived(ChannelHandlerContext ctx, String msg)

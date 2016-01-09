@@ -10,8 +10,11 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import net.spy.memcached.ConnectionFactoryBuilder;
+import net.spy.memcached.FailureMode;
+import net.spy.memcached.ConnectionFactoryBuilder.Locator;
 import net.spy.memcached.ConnectionFactoryBuilder.Protocol;
 import net.spy.memcached.MemcachedClient;
+import net.spy.memcached.HashAlgorithmRegistry;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -55,7 +58,16 @@ public class MemcachedCRUD implements DisposableBean {
 		try {
 			ConnectionFactoryBuilder builder = new ConnectionFactoryBuilder();
 			builder.setProtocol(Protocol.BINARY);
-			builder.setOpTimeout(60000);
+			builder.setOpTimeout(1000);
+			builder.setDaemon(true);
+			builder.setOpQueueMaxBlockTime(1000);
+			builder.setMaxReconnectDelay(1000);
+			builder.setTimeoutExceptionThreshold(1998);
+			builder.setFailureMode(FailureMode.Retry);
+			builder.setHashAlg(HashAlgorithmRegistry
+					.lookupHashAlgorithm("KETAMA_HASH"));
+			builder.setLocatorType(Locator.CONSISTENT);
+			builder.setUseNagleAlgorithm(false);
 			memcachedClient = new MemcachedClient(builder.build(), addrs);
 			logger.info("Memcached at {}:{}", host, port);
 		} catch (IOException e) {

@@ -11,6 +11,9 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.kidbear._36.core.GameInit;
+import com.kidbear._36.notification.ServerNotify;
+
 /**
  * @ClassName: ChannelMgr
  * @Description: Channel管理类
@@ -88,6 +91,9 @@ public class ChannelMgr {
 				if (u.ctx.equals(ctx)) {
 					it.remove();
 					ctx.close();
+					// 离线通知登录服务器
+					// ServerNotify
+					//	.logout((int) (u.junZhuId - GameInit.serverId) / 1000);
 				}
 			}
 		}

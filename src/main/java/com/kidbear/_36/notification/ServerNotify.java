@@ -109,11 +109,12 @@ public class ServerNotify {
 	 * @throws
 	 */
 	public static boolean validateLogin(int accId) {
-		String url = baseUrl + "changestate";
+		String url = baseUrl + "validateLogin";
 		Map<String, String> param = new HashMap<String, String>();
 		// request message
 		ServerReq req = new ServerReq();
-		req.setServerId(accId);
+		req.setAccId(accId);
+		req.setServerId(GameInit.serverId);
 		param.put("data", JSONUtils.toJSONString(req));
 		String result = HttpClient.get(url, param);
 		// response message
@@ -131,5 +132,22 @@ public class ServerNotify {
 			logger.info("无法连接登录服务器 {}", url);
 		}
 		return false;
+	}
+
+	/**
+	 * @Title: logout
+	 * @Description: 退出
+	 * @param accId
+	 * @throws
+	 */
+	public static void logout(int accId) {
+		String url = baseUrl + "logout";
+		Map<String, String> param = new HashMap<String, String>();
+		// request message
+		ServerReq req = new ServerReq();
+		req.setAccId(accId);
+		req.setServerId(GameInit.serverId);
+		param.put("data", JSONUtils.toJSONString(req));
+		HttpClient.get(url, param);
 	}
 }
