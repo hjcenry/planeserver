@@ -47,12 +47,12 @@ public class ChannelMgr {
 	 * @return ChannelUser
 	 * @throws
 	 */
-	public ChannelUser addChannelUser(ChannelHandlerContext ctx, Long junZhuId) {
+	public ChannelUser addChannelUser(ChannelHandlerContext ctx, Long userId) {
 		Long channelId = Long.valueOf(ChannelMgr.getInstance().genChannelId());
 		ChannelUser ret = new ChannelUser();
 		ret.channelId = channelId;
 		ret.ctx = ctx;
-		ret.junZhuId = junZhuId;
+		ret.userId = userId;
 		synchronized (channelMap) {
 			channelMap.put(channelId, ret);
 		}
@@ -93,7 +93,7 @@ public class ChannelMgr {
 					ctx.close();
 					// 离线通知登录服务器
 					// ServerNotify
-					//	.logout((int) (u.junZhuId - GameInit.serverId) / 1000);
+					// .logout((int) (u.junZhuId - GameInit.serverId) / 1000);
 				}
 			}
 		}
@@ -111,7 +111,7 @@ public class ChannelMgr {
 			Iterator<ChannelUser> it = channelMap.values().iterator();
 			while (it.hasNext()) {
 				ChannelUser u = it.next();
-				Long v = u.junZhuId;
+				Long v = u.userId;
 				if (v != null && v.longValue() == junZhuId.longValue()) {
 					return u;
 				}

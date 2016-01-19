@@ -60,10 +60,10 @@ public class AccountMgr {
 		// SocketHandler.writeJSON(ctx, resp);
 		// return;
 		// }
-		long junZhuId = accId * 1000 + GameInit.serverId;
-		logger.info("账号 {} 登录成功，君主id为 {}", accId, junZhuId);
+		long userId = accId * 1000 + GameInit.serverId;
+		logger.info("账号 {} 登录成功，用户id为 {}", accId, userId);
 		// 玩家登录到本服务器，Channel进行记录
-		ChannelMgr.getInstance().addChannelUser(ctx, junZhuId);
+		ChannelMgr.getInstance().addChannelUser(ctx, userId);
 		// response
 		resp.setCode(0);
 		SocketHandler.writeJSON(ctx, new ProtoMessage(ProtoIds.S_LOGIN_RESP,

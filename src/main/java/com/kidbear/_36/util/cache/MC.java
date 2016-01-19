@@ -28,7 +28,7 @@ public class MC {
 		return o;
 	} 
 	
-	public static boolean add(Object t, long id){
+	public static boolean add(Object t, Object id){
 		if(!cachedClass.contains(t.getClass())){
 			return false;
 		}

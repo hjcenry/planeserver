@@ -69,7 +69,7 @@ public class Router {
 	public void test(ProtoMessage msg, ChannelHandlerContext ctx) {
 		logger.info("收到客户端的测试消息:");
 		logger.info("id:" + msg.getProtoId());
-		logger.info("msg:" + JsonUtils.objectToJson(msg.getMsg(TestReq.class)));
+		logger.info("msg:" + JsonUtils.objectToJson(msg.getData(TestReq.class)));
 		JSONObject object = new JSONObject();
 		object.put("msg", "服务器收到测试消息");
 		ProtoMessage message = new ProtoMessage(ProtoIds.C_TEST, object);

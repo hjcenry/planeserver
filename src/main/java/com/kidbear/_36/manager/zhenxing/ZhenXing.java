@@ -1,19 +1,23 @@
 package com.kidbear._36.manager.zhenxing;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-
-@Entity
-@Table(name="ZhenXing")
+/** --zzid表示阵型编号 zxishave 表示是否有武将 **/
 public class ZhenXing {
-	private long id;
-	private long userid;
-	private String zx1;
-	private String zx2;
-	private String zx3;
-	private String zx4;
-	private String zx5;
-	private String zx6;
-	private String zx7;
-	private String zx8;
+	private int zzid;
+	private int zxishave;
+
+	public int getZxishave() {
+		return zxishave;
+	}
+
+	public void setZxishave(int zxishave) {
+		this.zxishave = zxishave;
+	}
+
+	public int getZzid() {
+		return zzid;
+	}
+
+	public void setZzid(int zzid) {
+		this.zzid = zzid;
+	}
 }

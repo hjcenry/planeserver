@@ -33,7 +33,7 @@ public class SocketTest {
 						req.setAttack(214000136);
 						req.setDefend(51200000);
 						req.setHealth(100000);
-						protoMessage.setMsg(req);
+						protoMessage.setData(req);
 
 						long start = System.currentTimeMillis();
 						outputStream.write(JsonUtils.objectToJson(protoMessage)

@@ -1,5 +1,7 @@
 package com.kidbear._36.core;
 
+import mongotest.MainTest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,6 +11,7 @@ import com.kidbear._36.util.ThreadViewer;
 import com.kidbear._36.util.csv.CsvDataLoader;
 import com.kidbear._36.util.hibernate.HibernateUtil;
 import com.kidbear._36.util.memcached.MemcachedCRUD;
+import com.kidbear._36.util.mongo.MongoUtil;
 import com.kidbear._36.util.redis.Redis;
 import com.kidbear._36.util.sensitive.SensitiveFilter;
 
@@ -69,6 +72,11 @@ public class GameInit {
 			// 加载hibernate
 			logger.info("加载hibernate");
 			HibernateUtil.init();
+			// 加载mongo
+			logger.info("加载mongo");
+			if (MongoUtil.getInstance() == null) {
+				logger.info("mongo登录失败，初始化异常");
+			}
 			// 初始化消息路由和系统模块
 			logger.info("初始化消息路由和系统模块");
 			Router.getInstance().initData();

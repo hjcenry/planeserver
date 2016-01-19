@@ -4,11 +4,13 @@ import java.sql.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
 @Table(name = "Mail")
 public class Mail {
+	@Id
 	private long id;
 	private String title;
 	private int type;

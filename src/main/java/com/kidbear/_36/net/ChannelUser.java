@@ -4,6 +4,6 @@ import io.netty.channel.ChannelHandlerContext;
 
 public class ChannelUser {
 	public Long channelId;
-	public Long junZhuId;
+	public Long userId;
 	public ChannelHandlerContext ctx;
 }

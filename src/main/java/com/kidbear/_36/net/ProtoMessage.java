@@ -11,7 +11,7 @@ public class ProtoMessage implements Serializable {
 	 */
 	private static final long serialVersionUID = -3460913241121151489L;
 	private short protoId;
-	public JSONObject msg;
+	public JSONObject data;
 
 	public ProtoMessage() {
 
@@ -21,9 +21,9 @@ public class ProtoMessage implements Serializable {
 		this.protoId = protoId;
 	}
 
-	public <T> ProtoMessage(short protoId, T msg) {
+	public <T> ProtoMessage(short protoId, T data) {
 		this.protoId = protoId;
-		this.setMsg(msg);
+		this.setData(data);
 	}
 
 	public short getProtoId() {
@@ -34,11 +34,12 @@ public class ProtoMessage implements Serializable {
 		this.protoId = protoId;
 	}
 
-	public <T> T getMsg(Class<T> t) {// 转换为对象传递
-		return (T) JSONObject.toBean(msg, t);
+	@SuppressWarnings("unchecked")
+	public <T> T getData(Class<T> t) {// 转换为对象传递
+		return (T) JSONObject.toBean(data, t);
 	}
 
-	public <T> void setMsg(T t) {
-		this.msg = JSONObject.fromObject(t);
+	public <T> void setData(T t) {
+		this.data = JSONObject.fromObject(t);
 	}
 }
