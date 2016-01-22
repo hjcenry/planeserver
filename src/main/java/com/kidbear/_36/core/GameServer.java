@@ -3,7 +3,8 @@ package com.kidbear._36.core;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.kidbear._36.net.SocketServer;
+import com.kidbear._36.net.http.HttpServer;
+import com.kidbear._36.net.socket.SocketServer;
 
 public class GameServer {
 	private static final Logger logger = LoggerFactory
@@ -27,7 +28,8 @@ public class GameServer {
 	 * @throws
 	 */
 	public void startServer() {
-		SocketServer.getInstance().start();
+		// SocketServer.getInstance().start();
+		HttpServer.getInstance().start();
 		shutdown = false;
 	}
 
@@ -37,7 +39,8 @@ public class GameServer {
 	 * @throws
 	 */
 	public void shutServer() {
-		SocketServer.getInstance().shut();
+		// SocketServer.getInstance().shut();
+		HttpServer.getInstance().shut();
 		shutdown = true;
 	}
 }

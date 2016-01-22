@@ -10,28 +10,28 @@ public class ProtoMessage implements Serializable {
 	 * @Fields serialVersionUID : TODO
 	 */
 	private static final long serialVersionUID = -3460913241121151489L;
-	private short protoId;
+	private short id;
 	public JSONObject data;
 
 	public ProtoMessage() {
 
 	}
 
-	public ProtoMessage(short protoId) {
-		this.protoId = protoId;
+	public ProtoMessage(short id) {
+		this.id = id;
 	}
 
-	public <T> ProtoMessage(short protoId, T data) {
-		this.protoId = protoId;
+	public <T> ProtoMessage(short id, T data) {
+		this.id = id;
 		this.setData(data);
 	}
 
-	public short getProtoId() {
-		return protoId;
+	public short getId() {
+		return id;
 	}
 
-	public void setProtoId(short protoId) {
-		this.protoId = protoId;
+	public void setId(short id) {
+		this.id = id;
 	}
 
 	@SuppressWarnings("unchecked")

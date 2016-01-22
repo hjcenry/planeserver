@@ -1,0 +1,43 @@
+package com.kidbear._36.net.http;
+
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.kidbear._36.util.memcached.MemcachedCRUD;
+import com.kidbear._36.util.mongo.MongoCollections;
+import com.kidbear._36.util.mongo.MongoUtil;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
+
+public class SessionMgr {
+	public Logger logger = LoggerFactory.getLogger(SessionMgr.class);
+	public MemcachedCRUD memcached;
+	private static SessionMgr inst;
+
+	private SessionMgr() {
+		memcached = MemcachedCRUD.getInstance();
+	}
+
+	public static SessionMgr getInstance() {
+		if (inst == null) {
+			inst = new SessionMgr();
+		}
+		return inst;
+	}
+
+	public void addUser(long userId) {
+		memcached.safeSet(SessionKey.CACHE_ONLINE + userId, 0, 1);// 上线
+	}
+
+	public void removeUser(long userId) {
+		memcached.safeSet(SessionKey.CACHE_ONLINE + userId, 0, 0);// 下线
+	}
+
+	public void removeAll() {
+		BasicDBObject fields = new BasicDBObject("userid", 1);
+		List<DBObject> objects = MongoUtil.getInstance().findAllByFields(MongoCollections.USER_DATA,
+				fields);
+	}
+}

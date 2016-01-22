@@ -5,7 +5,7 @@ import mongotest.MainTest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.kidbear._36.net.ChannelMgr;
+import com.kidbear._36.net.socket.ChannelMgr;
 import com.kidbear._36.util.Config;
 import com.kidbear._36.util.ThreadViewer;
 import com.kidbear._36.util.csv.CsvDataLoader;
@@ -88,6 +88,7 @@ public class GameInit {
 			ThreadViewer.start();
 			// 启动Channel管理
 			logger.info("启动Channel管理");
+			ChannelMgr.getInstance();
 			// 启动服务器
 			GameServer.getInstance().startServer();
 			// ServerNotify.startServer();
@@ -109,9 +110,6 @@ public class GameInit {
 		logger.info("================关闭逻辑服务器================");
 		// 通知关闭服务器，部署36router开启
 		// ServerNotify.shutServer();
-		// 关闭所有channel连接
-		logger.info("关闭所有channel连接");
-		ChannelMgr.getInstance().closeAllChannel();
 		logger.info("关闭redis连接");
 		Redis.destroy();
 		logger.info("关闭memcached连接");

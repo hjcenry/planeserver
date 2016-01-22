@@ -1,4 +1,7 @@
-package com.kidbear._36.net;
+package com.kidbear._36.net.socket;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -15,9 +18,11 @@ import com.kidbear._36.core.Router;
 import com.kidbear._36.manager.account.AccountMgr;
 import com.kidbear._36.util.Constants;
 import com.kidbear._36.util.JsonUtils;
+import com.kidbear._36.util.encrypt.XXTeaCoder;
 
 public class SocketHandlerImp {
 	private static Logger log = LoggerFactory.getLogger(SocketHandlerImp.class);
+	public static volatile boolean ENCRIPT_DECRIPT = true;
 
 	public void channelRead(final ChannelHandlerContext ctx, final Object msg)
 			throws Exception {
@@ -25,29 +30,60 @@ public class SocketHandlerImp {
 			@Override
 			public void run() {
 				if (!GameServer.shutdown) {// 服务器开启的情况下
-					ByteBuf buf = (ByteBuf) msg;
-					byte[] req = new byte[buf.readableBytes()];
-					buf.readBytes(req);
-					String body = new String(req, CharsetUtil.UTF_8);
-					if (Constants.MSG_LOG_DEBUG) {
-						log.info("server received: " + body);
-					}
-					ProtoMessage protoMessage = null;
-					try {
-						protoMessage = (ProtoMessage) JsonUtils.jsonToBean(
-								body, ProtoMessage.class);
-					} catch (Exception e) {
-						log.error("json序列化错误");
-					}
-					Router.getInstance().route(protoMessage, ctx);
+					dataHandle(ctx, msg);
 				} else {// 服务器已关闭
 					JSONObject jsonObject = new JSONObject();
 					jsonObject.put("errMsg", "server closed");
 					writeJSON(ctx, jsonObject);
 				}
 			}
-		});
 
+		});
+	}
+
+	/**
+	 * @Title: codeFilter
+	 * @Description: 编解码过滤
+	 * @param val
+	 * @return String
+	 * @throws
+	 */
+	private String codeFilter(String val) {
+		try {
+			val = val.contains("%") ? URLDecoder.decode(val, "UTF-8") : val;
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		String valTmp = val;
+		val = ENCRIPT_DECRIPT ? XXTeaCoder.decryptBase64StringToString(val,
+				XXTeaCoder.key) : val;
+		if (Constants.MSG_LOG_DEBUG) {
+			if (val == null) {
+				val = valTmp;
+			}
+			log.info("server received : {}", val);
+		}
+		return val;
+	}
+
+	/**
+	 * @Title: dataHandle
+	 * @Description: 数据处理
+	 * @param ctx
+	 * @param msg
+	 *            void
+	 * @throws
+	 */
+	private void dataHandle(final ChannelHandlerContext ctx, final Object msg) {
+		ByteBuf buf = (ByteBuf) msg;
+		byte[] req = new byte[buf.readableBytes()];
+		buf.readBytes(req);
+		String body = new String(req, CharsetUtil.UTF_8);
+		body = codeFilter(body);
+		if (Constants.MSG_LOG_DEBUG) {
+			log.info("server received: " + body);
+		}
+		Router.getInstance().route(body, ctx);
 	}
 
 	public static void writeJSON(ChannelHandlerContext ctx, Object msg) {

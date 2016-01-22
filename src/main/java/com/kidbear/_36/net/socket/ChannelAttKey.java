@@ -1,4 +1,4 @@
-package com.kidbear._36.net;
+package com.kidbear._36.net.socket;
 
 public class ChannelAttKey {
 	public static final String JUNZHU_ID = "junZhuId";

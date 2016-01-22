@@ -7,10 +7,12 @@ import io.netty.channel.ChannelHandlerContext;
 import net.sf.json.JSONObject;
 
 import com.kidbear._36.manager.account.AccountMgr;
+import com.kidbear._36.manager.building.JunjichuMgr;
 import com.kidbear._36.net.ProtoIds;
 import com.kidbear._36.net.ProtoMessage;
-import com.kidbear._36.net.SocketHandler;
+import com.kidbear._36.net.http.HttpHandler;
 import com.kidbear._36.net.message.TestReq;
+import com.kidbear._36.net.socket.SocketHandler;
 import com.kidbear._36.util.JsonUtils;
 
 /**
@@ -23,8 +25,12 @@ import com.kidbear._36.util.JsonUtils;
 public class Router {
 	private static Router router = new Router();
 	public Logger logger = LoggerFactory.getLogger(Router.class);
+	public AccountMgr accountMgr;
+	public JunjichuMgr junjichuMgr;
 
 	private Router() {
+		accountMgr = AccountMgr.getInstance();
+		junjichuMgr = JunjichuMgr.getInstance();
 	}
 
 	public static Router getInstance() {
@@ -35,23 +41,22 @@ public class Router {
 	}
 
 	public void initData() {// 初始化模块
-		AccountMgr.getInstance().initData();
+		accountMgr.initData();
+		junjichuMgr.initData();
 	}
 
 	/**
 	 * @Title: route
 	 * @Description: 消息路由分发
-	 * @param cmd
-	 *            协议号
-	 * @param msg
-	 *            消息体
-	 * @param session
-	 *            IoSession
-	 * @return void
+	 * @param val
+	 * @param ctx
+	 *            void
 	 * @throws
 	 */
-	public void route(ProtoMessage msg, ChannelHandlerContext ctx) {
-		int cmd = msg.getProtoId();
+	public void route(String val, ChannelHandlerContext ctx) {
+		ProtoMessage msg = (ProtoMessage) JsonUtils.jsonToBean(val,
+				ProtoMessage.class);
+		int cmd = msg.getId();
 		switch (cmd) {
 		case ProtoIds.C_TEST:
 			test(msg, ctx);
@@ -68,11 +73,11 @@ public class Router {
 
 	public void test(ProtoMessage msg, ChannelHandlerContext ctx) {
 		logger.info("收到客户端的测试消息:");
-		logger.info("id:" + msg.getProtoId());
+		logger.info("id:" + msg.getId());
 		logger.info("msg:" + JsonUtils.objectToJson(msg.getData(TestReq.class)));
 		JSONObject object = new JSONObject();
 		object.put("msg", "服务器收到测试消息");
 		ProtoMessage message = new ProtoMessage(ProtoIds.C_TEST, object);
-		SocketHandler.writeJSON(ctx, message);
+		HttpHandler.writeJSON(ctx, message);
 	}
 }

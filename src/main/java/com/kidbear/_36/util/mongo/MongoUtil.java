@@ -221,7 +221,7 @@ public class MongoUtil {
 	 */
 	public List<DBObject> update(String collection, DBObject q,
 			DBObject setFields) {
-		getCollection(collection).updateMulti(q,
+		getCollection(collection).findAndModify(q,
 				new BasicDBObject("$set", setFields));
 		List<DBObject> list = find(collection, q);
 		// 遍历
@@ -237,12 +237,63 @@ public class MongoUtil {
 	}
 
 	/**
+	 * @Title: updateOne
+	 * @Description: 更新一条数据
+	 * @param collection
+	 * @param q
+	 * @param setFields
+	 * @return DBObject
+	 * @throws
+	 */
+	public DBObject updateOne(String collection, DBObject q, DBObject setFields) {
+		DBObject ret = getCollection(collection).findAndModify(q, setFields);
+		// MC 中修改
+		DBObject tmp = MC.<DBObject> get(DBObject.class, (Long) ret.get(DB_ID));
+		if (null != tmp) {
+			MC.update(ret, (Long) tmp.get(DB_ID));
+		}
+		return ret;
+	}
+
+	/**
+	 * @Title: updateOne
+	 * @Description: 更新一条数据
+	 * @param collection
+	 * @param q
+	 * @param setFields
+	 * @return DBObject
+	 * @throws
+	 */
+	public DBObject updateOne(String collection, long userid, DBObject setFields) {
+		BasicDBObject condition = new BasicDBObject(DB_ID, userid);
+		DBObject ret = getCollection(collection).findAndModify(condition,
+				setFields);
+		// MC 中修改
+		DBObject tmp = MC.<DBObject> get(DBObject.class, (Long) ret.get(DB_ID));
+		if (null != tmp) {
+			MC.update(ret, (Long) tmp.get(DB_ID));
+		}
+		return ret;
+	}
+
+	/**
 	 * 查找集合所有对象
 	 * 
 	 * @param collection
 	 */
 	public List<DBObject> findAll(String collection) {
 		List<DBObject> list = getCollection(collection).find().toArray();
+		return list;
+	}
+
+	/**
+	 * 查找集合所有对象特定字段
+	 * 
+	 * @param collection
+	 */
+	public List<DBObject> findAllByFields(String collection, DBObject fields) {
+		List<DBObject> list = getCollection(collection).find(null, fields)
+				.toArray();
 		return list;
 	}
 

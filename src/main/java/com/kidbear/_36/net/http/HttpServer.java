@@ -1,16 +1,15 @@
-package com.kidbear._36.net;
+package com.kidbear._36.net.http;
 
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelOption;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.codec.string.StringDecoder;
-import io.netty.handler.codec.string.StringEncoder;
-import io.netty.util.CharsetUtil;
+import io.netty.handler.codec.http.HttpObjectAggregator;
+import io.netty.handler.codec.http.HttpRequestDecoder;
+import io.netty.handler.codec.http.HttpResponseEncoder;
+import io.netty.handler.stream.ChunkedWriteHandler;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,19 +22,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-public class SocketServer {
-	public static Logger log = LoggerFactory.getLogger(SocketServer.class);
-	public static SocketServer inst;
+public class HttpServer {
+	public static Logger log = LoggerFactory.getLogger(HttpServer.class);
+	public static HttpServer inst;
 	public static Properties p;
 	public static int port;
 	private NioEventLoopGroup bossGroup = new NioEventLoopGroup();
 	private NioEventLoopGroup workGroup = new NioEventLoopGroup();
 	public static ThreadPoolTaskExecutor handleTaskExecutor;// 处理消息线程池
 
-	private SocketServer() {
+	private HttpServer() {// 线程池初始化
+
 	}
 
-	/**  
+	/** 
 	* @Title: initThreadPool 
 	* @Description: 初始化线程池
 	* void
@@ -58,9 +58,9 @@ public class SocketServer {
 		handleTaskExecutor.initialize();
 	}
 
-	public static SocketServer getInstance() {
+	public static HttpServer getInstance() {
 		if (inst == null) {
-			inst = new SocketServer();
+			inst = new HttpServer();
 			inst.initData();
 			inst.initThreadPool();
 		}
@@ -77,48 +77,29 @@ public class SocketServer {
 		}
 	}
 
-	// Test Code
-	public static void main(String[] args) {
-		SocketServer server = new SocketServer();
-		SocketServer.port = 8586;
-		server.start();
-	}
-
 	public void start() {
 		ServerBootstrap bootstrap = new ServerBootstrap();
 		bootstrap.group(bossGroup, workGroup);
 		bootstrap.channel(NioServerSocketChannel.class);
-		bootstrap.option(ChannelOption.SO_BACKLOG, 128);
-		// 通过NoDelay禁用Nagle,使消息立即发出去，不用等待到一定的数据量才发出去
-		bootstrap.option(ChannelOption.TCP_NODELAY, true);
-		bootstrap.option(ChannelOption.SO_REUSEADDR, true);
-		// 保持长连接状态
-		bootstrap.childOption(ChannelOption.SO_KEEPALIVE, true);
 		bootstrap.childHandler(new ChannelInitializer<SocketChannel>() {
 			@Override
 			protected void initChannel(SocketChannel ch) throws Exception {
 				ChannelPipeline pipeline = ch.pipeline();
-				pipeline.addLast(new StringDecoder(CharsetUtil.UTF_8));
-				pipeline.addLast(new StringEncoder(CharsetUtil.UTF_8));
-				// 业务逻辑处理
-				pipeline.addLast(new SocketHandler());
+				pipeline.addLast("decoder", new HttpRequestDecoder());
+				pipeline.addLast("aggregator", new HttpObjectAggregator(65536));
+				pipeline.addLast("encoder", new HttpResponseEncoder());
+				pipeline.addLast("http-chunked", new ChunkedWriteHandler());
+				pipeline.addLast("handler", new HttpHandler());
 			}
 		});
-		// 启动端口
-		ChannelFuture future;
-		try {
-			future = bootstrap.bind(port).sync();
-			if (future.isSuccess()) {
-				log.info("端口{}已绑定", port);
-			}
-		} catch (InterruptedException e) {
-			log.info("端口{}绑定失败", port);
-		}
+		log.info("端口{}已绑定", port);
+		bootstrap.bind(port);
 	}
 
 	public void shut() {
 		workGroup.shutdownGracefully();
 		workGroup.shutdownGracefully();
+		SessionMgr.getInstance().removeAll();
 		log.info("端口{}已解绑", port);
 	}
 
@@ -130,7 +111,7 @@ public class SocketServer {
 	 */
 	protected Properties readProperties() throws IOException {
 		Properties p = new Properties();
-		InputStream in = SocketServer.class
+		InputStream in = HttpServer.class
 				.getResourceAsStream("/net.properties");
 		Reader r = new InputStreamReader(in, Charset.forName("UTF-8"));
 		p.load(r);

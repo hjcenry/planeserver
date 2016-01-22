@@ -26,7 +26,7 @@ public class SocketTest {
 						Socket socket = new Socket("localhost", 8586);
 						OutputStream outputStream = socket.getOutputStream();
 						ProtoMessage protoMessage = new ProtoMessage();
-						protoMessage.setProtoId(ProtoIds.C_TEST);
+						protoMessage.setId(ProtoIds.C_TEST);
 						TestReq req = new TestReq();
 						req.setErrMsg("客户端测试消息");
 						req.setName("hjc");
