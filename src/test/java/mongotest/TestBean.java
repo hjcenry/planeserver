@@ -1,15 +1,15 @@
 package mongotest;
 
 public class TestBean {
-	private int id;
+	private Long id;
 	private String msg;
 	private double score;
 
-	public int getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 

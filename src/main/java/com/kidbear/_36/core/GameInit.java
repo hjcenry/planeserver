@@ -58,17 +58,7 @@ public class GameInit {
 					}).start();
 			// memcached
 			logger.info("加载Memcached");
-			final MemcachedCRUD m = MemcachedCRUD.getInstance();
-			new Thread(new Runnable() {
-				@Override
-				public void run() {
-					try {
-						m.set("test", 0, "testVal");
-					} catch (Exception e) {
-						logger.info("Memcached未启动，初始化异常");
-					}
-				}
-			}).start();
+			MemcachedCRUD.getInstance();
 			// 加载hibernate
 			logger.info("加载hibernate");
 			HibernateUtil.init();

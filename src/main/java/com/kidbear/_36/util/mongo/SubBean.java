@@ -1,7 +1,7 @@
 package com.kidbear._36.util.mongo;
 
-public class SubBean extends BaseBean {
-	private Integer id;
+public class SubBean {
+	private Long id;
 	private String str;
 
 	public String getStr() {
@@ -12,11 +12,11 @@ public class SubBean extends BaseBean {
 		this.str = str;
 	}
 
-	public Integer getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(Integer id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 }

@@ -28,16 +28,22 @@ public class SessionMgr {
 	}
 
 	public void addUser(long userId) {
-		memcached.safeSet(SessionKey.CACHE_ONLINE + userId, 0, 1);// 上线
+		memcached.saveObject(SessionKey.CACHE_ONLINE + userId, 1);// 上线
 	}
 
 	public void removeUser(long userId) {
-		memcached.safeSet(SessionKey.CACHE_ONLINE + userId, 0, 0);// 下线
+		memcached.saveObject(SessionKey.CACHE_ONLINE + userId, 0);// 下线
 	}
 
 	public void removeAll() {
-		BasicDBObject fields = new BasicDBObject("userid", 1);
-		List<DBObject> objects = MongoUtil.getInstance().findAllByFields(MongoCollections.USER_DATA,
-				fields);
+		BasicDBObject fields = new BasicDBObject(MongoUtil.DB_ID, 1);
+		List<DBObject> objects = MongoUtil.getInstance().findAllByFields(
+				MongoCollections.USER_DATA, fields);
+		for (DBObject dbObject : objects) {
+			Long userId = (Long) dbObject.get(MongoUtil.DB_ID);
+			if (memcached.keyExist(SessionKey.CACHE_ONLINE + userId)) {
+				memcached.saveObject(SessionKey.CACHE_ONLINE + userId, 0);// 下线
+			}
+		}
 	}
 }

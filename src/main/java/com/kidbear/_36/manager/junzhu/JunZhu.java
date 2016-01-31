@@ -5,12 +5,18 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.kidbear._36.util.cache.MCSupport;
+
 @Entity
 @Table(name = "JunZhu")
-public class JunZhu {
+public class JunZhu implements MCSupport {
+	/**
+	 * @Fields serialVersionUID : TODO
+	 */
+	private static final long serialVersionUID = -5385044598250102957L;
 	private String name;// — 用户名
 	@Id
-	private int id;// —用户id
+	private long id;// —用户id
 	private int country;// —用户所属国家 1表示蜀国 2表示魏国 3表示吴国
 	private int headImg;// —用户头像
 	private int level;// —用户等级 —君主等级
@@ -36,11 +42,11 @@ public class JunZhu {
 		this.name = name;
 	}
 
-	public int getId() {
+	public long getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 
@@ -162,6 +168,11 @@ public class JunZhu {
 
 	public void setCurentZx(int curentZx) {
 		this.curentZx = curentZx;
+	}
+
+	@Override
+	public long getIdentifier() {
+		return id;
 	}
 
 }

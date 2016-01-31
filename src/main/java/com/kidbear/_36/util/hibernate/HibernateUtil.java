@@ -67,7 +67,7 @@ public class HibernateUtil {
 		try {
 			if (o instanceof MCSupport) {
 				MCSupport s = (MCSupport) o;// 需要对控制了的对象在第一次存库时调用MC.add
-				MC.update(o, s.getIdentifier());// MC中控制了哪些类存缓存。
+				MC.update(o, String.valueOf(s.getIdentifier()));// MC中控制了哪些类存缓存。
 				mcOk = true;
 				session.update(o);
 			} else {
@@ -93,7 +93,7 @@ public class HibernateUtil {
 		try {
 			if (o instanceof MCSupport) {
 				MCSupport s = (MCSupport) o;// 需要对控制了的对象在第一次存库时调用MC.add
-				MC.update(o, s.getIdentifier());// MC中控制了哪些类存缓存。
+				MC.update(o, String.valueOf(s.getIdentifier()));// MC中控制了哪些类存缓存。
 				session.update(o);
 			} else {
 				session.update(o);
@@ -135,7 +135,7 @@ public class HibernateUtil {
 		if (!MC.cachedClass.contains(t)) {
 			return find(t, "where " + keyField + "=" + id, false);
 		}
-		T ret = MC.get(t, id);
+		T ret = MC.get(t, String.valueOf(id));
 		if (ret == null) {
 			if (showMCHitLog)
 				log.info("MC未命中{}#{}", t.getSimpleName(), id);
@@ -143,7 +143,7 @@ public class HibernateUtil {
 			if (ret != null) {
 				if (showMCHitLog)
 					log.info("DB命中{}#{}", t.getSimpleName(), id);
-				MC.add(ret, id);
+				MC.add(ret, String.valueOf(id));
 			} else {
 				if (showMCHitLog)
 					log.info("DB未命中{}#{}", t.getSimpleName(), id);
@@ -209,7 +209,7 @@ public class HibernateUtil {
 			MCSupport mc = (MCSupport) ret;
 			long mcId = mc.getIdentifier();
 			log.info("found id from DB {}#{}", targetClz.getSimpleName(), mcId);
-			MC.add(key, mcId);
+			MC.add(key, String.valueOf(mcId));
 			ret = (T) find(targetClz, mcId);
 		}
 		return ret;
@@ -310,7 +310,7 @@ public class HibernateUtil {
 		try {
 			if (o instanceof MCSupport) {
 				MCSupport s = (MCSupport) o;// 需要对控制了的对象在第一次存库时调用MC.add
-				MC.delete(o.getClass(), s.getIdentifier());// MC中控制了哪些类存缓存。
+				MC.delete(o.getClass(), String.valueOf(s.getIdentifier()));// MC中控制了哪些类存缓存。
 			}
 			session.delete(o);
 			session.getTransaction().commit();

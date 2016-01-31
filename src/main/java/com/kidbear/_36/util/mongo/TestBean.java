@@ -2,18 +2,18 @@ package com.kidbear._36.util.mongo;
 
 import java.util.List;
 
-public class TestBean extends BaseBean {
-	private Integer id;
+public class TestBean {
+	private Long id;
 	private String msg;
 	private Double score;
 	private SubBean subBean;
 	private List<SubBean> subBeans;
 
-	public Integer getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(Integer id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 

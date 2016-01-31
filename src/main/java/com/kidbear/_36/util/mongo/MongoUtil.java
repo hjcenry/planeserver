@@ -116,6 +116,7 @@ public class MongoUtil {
 	 * @param collection
 	 */
 	public DBCollection getCollection(String collection) {
+		db.requestStart();
 		DBCollection collect = db.getCollection(collection);
 		return collect;
 	}
@@ -128,8 +129,9 @@ public class MongoUtil {
 	 */
 	public void insert(String collection, DBObject o) {
 		getCollection(collection).insert(o);
+		db.requestDone();
 		// 添加到MC控制
-		MC.add(o, o.get(DB_ID));
+		MC.add(o, o.get(DB_ID).toString());
 	}
 
 	/**
@@ -143,9 +145,10 @@ public class MongoUtil {
 			return;
 		}
 		getCollection(collection).insert(list);
+		db.requestDone();
 		// 批量插入MC
 		for (DBObject o : list) {
-			MC.add(o, o.get(DB_ID));
+			MC.add(o, o.get(DB_ID).toString());
 		}
 	}
 
@@ -159,12 +162,13 @@ public class MongoUtil {
 	public List<DBObject> delete(String collection, DBObject q) {
 		getCollection(collection).remove(q);
 		List<DBObject> list = find(collection, q);
+		db.requestDone();
 		// MC中删除
 		for (DBObject tmp : list) {
-			DBObject dbObject = MC.<DBObject> get(DBObject.class,
-					(Long) tmp.get(DB_ID));
+			DBObject dbObject = MC.<DBObject> get(DBObject.class, tmp
+					.get(DB_ID).toString());
 			if (null != dbObject) {
-				MC.delete(DBObject.class, (Long) dbObject.get(DB_ID));
+				MC.delete(DBObject.class, dbObject.get(DB_ID).toString());
 			}
 		}
 		return list;
@@ -185,6 +189,7 @@ public class MongoUtil {
 			// 批量条件删除
 			delete(collection, list.get(i));
 		}
+		db.requestDone();
 	}
 
 	/**
@@ -194,6 +199,7 @@ public class MongoUtil {
 	 */
 	public int getCount(String collection) {
 		int count = (int) getCollection(collection).find().count();
+		db.requestDone();
 		return count;
 	}
 
@@ -206,7 +212,9 @@ public class MongoUtil {
 	 */
 
 	public long getCount(String collection, DBObject q) {
-		return getCollection(collection).getCount(q);
+		long count = getCollection(collection).getCount(q);
+		db.requestDone();
+		return count;
 	}
 
 	/**
@@ -224,13 +232,14 @@ public class MongoUtil {
 		getCollection(collection).findAndModify(q,
 				new BasicDBObject("$set", setFields));
 		List<DBObject> list = find(collection, q);
+		db.requestDone();
 		// 遍历
 		for (DBObject dbObject : list) {
 			// MC 中修改
-			DBObject tmp = MC.<DBObject> get(DBObject.class,
-					(Long) dbObject.get(DB_ID));
+			DBObject tmp = MC.<DBObject> get(DBObject.class, dbObject
+					.get(DB_ID).toString());
 			if (null != tmp) {
-				MC.update(dbObject, (Long) tmp.get(DB_ID));
+				MC.update(dbObject, tmp.get(DB_ID).toString());
 			}
 		}
 		return list;
@@ -247,10 +256,12 @@ public class MongoUtil {
 	 */
 	public DBObject updateOne(String collection, DBObject q, DBObject setFields) {
 		DBObject ret = getCollection(collection).findAndModify(q, setFields);
+		db.requestDone();
 		// MC 中修改
-		DBObject tmp = MC.<DBObject> get(DBObject.class, (Long) ret.get(DB_ID));
+		DBObject tmp = MC.<DBObject> get(DBObject.class, ret.get(DB_ID)
+				.toString());
 		if (null != tmp) {
-			MC.update(ret, (Long) tmp.get(DB_ID));
+			MC.update(ret, tmp.get(DB_ID).toString());
 		}
 		return ret;
 	}
@@ -268,10 +279,12 @@ public class MongoUtil {
 		BasicDBObject condition = new BasicDBObject(DB_ID, userid);
 		DBObject ret = getCollection(collection).findAndModify(condition,
 				setFields);
+		db.requestDone();
 		// MC 中修改
-		DBObject tmp = MC.<DBObject> get(DBObject.class, (Long) ret.get(DB_ID));
+		DBObject tmp = MC.<DBObject> get(DBObject.class, ret.get(DB_ID)
+				.toString());
 		if (null != tmp) {
-			MC.update(ret, (Long) tmp.get(DB_ID));
+			MC.update(ret, tmp.get(DB_ID).toString());
 		}
 		return ret;
 	}
@@ -283,6 +296,7 @@ public class MongoUtil {
 	 */
 	public List<DBObject> findAll(String collection) {
 		List<DBObject> list = getCollection(collection).find().toArray();
+		db.requestDone();
 		return list;
 	}
 
@@ -294,6 +308,7 @@ public class MongoUtil {
 	public List<DBObject> findAllByFields(String collection, DBObject fields) {
 		List<DBObject> list = getCollection(collection).find(null, fields)
 				.toArray();
+		db.requestDone();
 		return list;
 	}
 
@@ -306,7 +321,10 @@ public class MongoUtil {
 	 *            排序
 	 */
 	public List<DBObject> findAll(String collection, DBObject orderBy) {
-		return getCollection(collection).find().sort(orderBy).toArray();
+		List<DBObject> list = getCollection(collection).find().sort(orderBy)
+				.toArray();
+		db.requestDone();
+		return list;
 	}
 
 	/**
@@ -317,7 +335,9 @@ public class MongoUtil {
 	 *            查询条件
 	 */
 	public DBObject findOne(String collection, DBObject q) {
-		return findOne(collection, q, null);
+		DBObject ret = findOne(collection, q, null);
+		db.requestDone();
+		return ret;
 	}
 
 	/**
@@ -331,8 +351,8 @@ public class MongoUtil {
 	 */
 	public DBObject findOne(String collection, DBObject q, DBObject fields) {
 		if (q.containsField(DB_ID)) {// 如果根据id来查询,先从缓存取数据
-			DBObject tmp = MC.<DBObject> get(DBObject.class,
-					(Long) q.get(DB_ID));
+			DBObject tmp = MC.<DBObject> get(DBObject.class, q.get(DB_ID)
+					.toString());
 			if (tmp != null) {// 缓存没有数据，从数据库取
 				if (fields != null) {// 留下需要返回的字段
 					for (String key : tmp.keySet()) {
@@ -344,8 +364,10 @@ public class MongoUtil {
 				return tmp;
 			}
 		}
-		return fields == null ? getCollection(collection).findOne(q)
+		DBObject ret = fields == null ? getCollection(collection).findOne(q)
 				: getCollection(collection).findOne(q, fields);
+		db.requestDone();
+		return ret;
 	}
 
 	/**
@@ -360,10 +382,14 @@ public class MongoUtil {
 	public List<DBObject> findLess(String collection, DBObject q,
 			DBObject fileds) {
 		DBCursor c = getCollection(collection).find(q, fileds);
-		if (c != null)
-			return c.toArray();
-		else
+		if (c != null) {
+			List<DBObject> list = c.toArray();
+			db.requestDone();
+			return list;
+		} else {
+			db.requestDone();
 			return null;
+		}
 	}
 
 	/**
@@ -380,10 +406,14 @@ public class MongoUtil {
 	public List<DBObject> findLess(String collection, DBObject q,
 			DBObject fileds, DBObject orderBy) {
 		DBCursor c = getCollection(collection).find(q, fileds).sort(orderBy);
-		if (c != null)
-			return c.toArray();
-		else
+		if (c != null) {
+			List<DBObject> list = c.toArray();
+			db.requestDone();
+			return list;
+		} else {
+			db.requestDone();
 			return null;
+		}
 	}
 
 	/**
@@ -399,9 +429,12 @@ public class MongoUtil {
 	 */
 	public List<DBObject> findLess(String collection, DBObject q,
 			DBObject fileds, int pageNo, int perPageCount) {
-		return getCollection(collection).find(q, fileds)
+		List<DBObject> list = getCollection(collection).find(q, fileds)
 				.skip((pageNo - 1) * perPageCount).limit(perPageCount)
 				.toArray();
+		db.requestDone();
+		return list;
+
 	}
 
 	/**
@@ -422,9 +455,11 @@ public class MongoUtil {
 	 */
 	public List<DBObject> findLess(String collection, DBObject q,
 			DBObject fileds, DBObject orderBy, int pageNo, int perPageCount) {
-		return getCollection(collection).find(q, fileds).sort(orderBy)
-				.skip((pageNo - 1) * perPageCount).limit(perPageCount)
-				.toArray();
+		List<DBObject> list = getCollection(collection).find(q, fileds)
+				.sort(orderBy).skip((pageNo - 1) * perPageCount)
+				.limit(perPageCount).toArray();
+		db.requestDone();
+		return list;
 	}
 
 	/**
@@ -436,10 +471,14 @@ public class MongoUtil {
 	 */
 	public List<DBObject> find(String collection, DBObject q) {
 		DBCursor c = getCollection(collection).find(q);
-		if (c != null)
-			return c.toArray();
-		else
+		if (c != null) {
+			List<DBObject> list = c.toArray();
+			db.requestDone();
+			return list;
+		} else {
+			db.requestDone();
 			return null;
+		}
 	}
 
 	/**
@@ -453,10 +492,14 @@ public class MongoUtil {
 	 */
 	public List<DBObject> find(String collection, DBObject q, DBObject orderBy) {
 		DBCursor c = getCollection(collection).find(q).sort(orderBy);
-		if (c != null)
-			return c.toArray();
-		else
+		if (c != null) {
+			List<DBObject> list = c.toArray();
+			db.requestDone();
+			return list;
+		} else {
+			db.requestDone();
 			return null;
+		}
 	}
 
 	/**
@@ -470,9 +513,11 @@ public class MongoUtil {
 	 */
 	public List<DBObject> find(String collection, DBObject q, int pageNo,
 			int perPageCount) {
-		return getCollection(collection).find(q)
+		List<DBObject> list = getCollection(collection).find(q)
 				.skip((pageNo - 1) * perPageCount).limit(perPageCount)
 				.toArray();
+		db.requestDone();
+		return list;
 	}
 
 	/**
@@ -491,9 +536,11 @@ public class MongoUtil {
 	 */
 	public List<DBObject> find(String collection, DBObject q, DBObject orderBy,
 			int pageNo, int perPageCount) {
-		return getCollection(collection).find(q).sort(orderBy)
+		List<DBObject> list = getCollection(collection).find(q).sort(orderBy)
 				.skip((pageNo - 1) * perPageCount).limit(perPageCount)
 				.toArray();
+		db.requestDone();
+		return list;
 	}
 
 	/**
@@ -505,7 +552,9 @@ public class MongoUtil {
 	 *            distinct字段名称
 	 */
 	public Object[] distinct(String collection, String field) {
-		return getCollection(collection).distinct(field).toArray();
+		Object[] ret = getCollection(collection).distinct(field).toArray();
+		db.requestDone();
+		return ret;
 	}
 
 	/**
@@ -519,7 +568,9 @@ public class MongoUtil {
 	 *            查询条件
 	 */
 	public Object[] distinct(String collection, String field, DBObject q) {
-		return getCollection(collection).distinct(field, q).toArray();
+		Object[] ret = getCollection(collection).distinct(field, q).toArray();
+		db.requestDone();
+		return ret;
 	}
 
 	/**
@@ -541,8 +592,10 @@ public class MongoUtil {
 	 */
 	public BasicDBList group(String collection, DBObject key, DBObject q,
 			DBObject initial, String reduce, String finalize) {
-		return ((BasicDBList) getCollection(collection).group(key, q, initial,
-				reduce, finalize));
+		BasicDBList list = ((BasicDBList) getCollection(collection).group(key,
+				q, initial, reduce, finalize));
+		db.requestDone();
+		return list;
 	}
 
 	/**
@@ -569,7 +622,10 @@ public class MongoUtil {
 		// return coll.mapReduce(cmd).results();
 		MapReduceOutput out = getCollection(collection).mapReduce(map, reduce,
 				null, q);
-		return out.getOutputCollection().find().sort(orderBy).toArray();
+		Iterable<DBObject> list = out.getOutputCollection().find()
+				.sort(orderBy).toArray();
+		db.requestDone();
+		return list;
 	}
 
 	/**
@@ -597,9 +653,11 @@ public class MongoUtil {
 			int perPageCount) {
 		MapReduceOutput out = getCollection(collection).mapReduce(map, reduce,
 				null, q);
-		return out.getOutputCollection().find().sort(orderBy)
+		List<DBObject> list = out.getOutputCollection().find().sort(orderBy)
 				.skip((pageNo - 1) * perPageCount).limit(perPageCount)
 				.toArray();
+		db.requestDone();
+		return list;
 	}
 
 	/**
@@ -623,13 +681,16 @@ public class MongoUtil {
 	public List<DBObject> mapReduce(String collection, String map,
 			String reduce, String outputCollectionName, DBObject q,
 			DBObject orderBy) {
+		db.requestStart();
 		if (!db.collectionExists(outputCollectionName)) {
 			getCollection(collection).mapReduce(map, reduce,
 					outputCollectionName, q);
 		}
-		return getCollection(outputCollectionName)
+		List<DBObject> list = getCollection(outputCollectionName)
 				.find(null, new BasicDBObject("_id", false)).sort(orderBy)
 				.toArray();
+		db.requestDone();
+		return list;
 	}
 
 	/**
@@ -657,14 +718,33 @@ public class MongoUtil {
 	public List<DBObject> mapReduce(String collection, String map,
 			String reduce, String outputCollectionName, DBObject q,
 			DBObject orderBy, int pageNo, int perPageCount) {
+		db.requestStart();
 		if (!db.collectionExists(outputCollectionName)) {
 			getCollection(collection).mapReduce(map, reduce,
 					outputCollectionName, q);
 		}
-		return getCollection(outputCollectionName)
+		List<DBObject> list = getCollection(outputCollectionName)
 				.find(null, new BasicDBObject("_id", false)).sort(orderBy)
 				.skip((pageNo - 1) * perPageCount).limit(perPageCount)
 				.toArray();
+		db.requestDone();
+		return list;
+	}
+
+	/**
+	 * @param t
+	 * @return
+	 */
+	public <T> Long getTableIDMax(Class<T> t) {
+		Long id = 1l;
+		DBCursor cursor = getCollection(t.getSimpleName()).find()
+				.sort(new BasicDBObject(DB_ID, -1)).limit(1);
+		List<DBObject> list = cursor.toArray();
+		if (list.size() > 0) {
+			DBObject ret = list.get(0);
+			id = (Long) ret.get(DB_ID);
+		}
+		return id;
 	}
 
 	/**
