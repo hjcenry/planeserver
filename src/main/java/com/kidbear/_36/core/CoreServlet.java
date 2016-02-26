@@ -10,15 +10,7 @@ import javax.servlet.http.HttpServlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.kidbear._36.util.mongo.MainTest;
-
-/**
- * Servlet implementation class CoreServlet
- */
 public class CoreServlet extends HttpServlet {
-	/**
-	 * @Fields serialVersionUID : TODO
-	 */
 	private static final long serialVersionUID = -2082543656440562457L;
 	public static final Logger logger = LoggerFactory
 			.getLogger(CoreServlet.class);
@@ -39,7 +31,6 @@ public class CoreServlet extends HttpServlet {
 	public void init() throws ServletException {
 		logger.info("CoreServelet init");
 		GameInit.init();// 初始化游戏服务器
-		// MainTest.run();
 	}
 
 }

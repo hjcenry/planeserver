@@ -8,6 +8,8 @@ import org.slf4j.LoggerFactory;
 import com.kidbear._36.core.GameInit;
 import com.kidbear._36.net.ProtoIds;
 import com.kidbear._36.net.ProtoMessage;
+import com.kidbear._36.net.http.HttpHandler;
+import com.kidbear._36.net.http.SessionMgr;
 import com.kidbear._36.net.message.LoginReq;
 import com.kidbear._36.net.message.LoginResp;
 import com.kidbear._36.net.socket.ChannelMgr;
@@ -50,7 +52,6 @@ public class AccountMgr {
 	 */
 	public void login(int cmd, LoginReq request, ChannelHandlerContext ctx) {
 		int accId = request.getAccId();
-		LoginResp resp = new LoginResp();
 		// 与router服务器通信验证是否登录
 		// boolean flag = ServerNotify.validateLogin(accId);
 		// if (flag) {
@@ -63,11 +64,12 @@ public class AccountMgr {
 		long userId = accId * 1000 + GameInit.serverId;
 		logger.info("账号 {} 登录成功，用户id为 {}", accId, userId);
 		// 玩家登录到本服务器，Channel进行记录
-		ChannelMgr.getInstance().addChannelUser(ctx, userId);
+		// ChannelMgr.getInstance().addChannelUser(ctx, userId);
+		SessionMgr.getInstance().addUser(userId);
 		// response
-		resp.setCode(0);
-		SocketHandler.writeJSON(ctx, new ProtoMessage(ProtoIds.S_LOGIN_RESP,
-				resp));
+		// SocketHandler.writeJSON(ctx,
+		// ProtoMessage.getSuccessResp(ProtoIds.LOGIN));
+		HttpHandler.writeJSON(ctx, ProtoMessage.getSuccessResp());
 	}
 
 	/**

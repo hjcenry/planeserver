@@ -1,10 +1,10 @@
 package com.kidbear._36.core;
 
-import mongotest.MainTest;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.kidbear._36.manager.event.EventMgr;
+import com.kidbear._36.net.ProtoIds;
 import com.kidbear._36.net.socket.ChannelMgr;
 import com.kidbear._36.util.Config;
 import com.kidbear._36.util.ThreadViewer;
@@ -63,22 +63,25 @@ public class GameInit {
 			logger.info("加载hibernate");
 			HibernateUtil.init();
 			// 加载mongo
-			logger.info("加载mongo");
-			if (MongoUtil.getInstance() == null) {
-				logger.info("mongo登录失败，初始化异常");
-			}
+			// logger.info("加载mongo");
+			// if (MongoUtil.getInstance() == null) {
+			// logger.info("mongo登录失败，初始化异常");
+			// }
+			// 开启事件处理器
+			logger.info("开启事件处理器");
+			new EventMgr();
 			// 初始化消息路由和系统模块
 			logger.info("初始化消息路由和系统模块");
 			Router.getInstance().initData();
 			// 初始化消息协议
 			logger.info("初始化消息协议");
-			// ProtoIds.init();
+			ProtoIds.init();
 			// 启动线程监控
 			logger.info("启动线程监控");
 			ThreadViewer.start();
 			// 启动Channel管理
-			logger.info("启动Channel管理");
-			ChannelMgr.getInstance();
+			// logger.info("启动Channel管理");
+			// ChannelMgr.getInstance();
 			// 启动服务器
 			GameServer.getInstance().startServer();
 			// ServerNotify.startServer();

@@ -42,9 +42,12 @@ public class Redis {
 	}
 
 	private void init() {
-		String redisServer = GameInit.cfg.get("redisServer");
+		String redisServer = null;
+		if (GameInit.cfg != null) {
+			redisServer = GameInit.cfg.get("redisServer");
+		}
 		if (redisServer == null) {
-			redisServer = "localhost:6379";
+			redisServer = "123.59.139.220:6379";
 		}
 		redisServer = redisServer.trim();
 		String[] tmp = redisServer.split(":");
@@ -58,7 +61,7 @@ public class Redis {
 		// this.redisListener = new RedisPubSubListener();
 	}
 
-	public void test(){
+	public void test() {
 		Jedis j = pool.getResource();
 		pool.returnResource(j);
 	}

@@ -2,7 +2,7 @@ package com.kidbear._36.manager;
 
 import net.sf.json.JSONArray;
 
-import com.kidbear._36.manager.zhenxing.ZhenXing;
+import com.kidbear._36.manager.zhenxing.ZhenXingInfo;
 
 public class GameData {
 	private Long userid;
@@ -22,7 +22,7 @@ public class GameData {
 	private Long user_jianghunnum;// --将魂数量
 	private Integer user_mfck_num;// --免费抽卡次数
 	private Integer user_curent_zxnum;// --用户的当前阵型
-	private ZhenXing user_zxlist;
+	private ZhenXingInfo user_zxlist;
 	private Integer junjichu_level;// --军机处等级
 	private Integer huangcheng_level;// --皇城等级
 	private Integer zhaoshangju_level;// --招商局等级
@@ -186,11 +186,11 @@ public class GameData {
 		this.user_curent_zxnum = user_curent_zxnum;
 	}
 
-	public ZhenXing getUser_zxlist() {
+	public ZhenXingInfo getUser_zxlist() {
 		return user_zxlist;
 	}
 
-	public void setUser_zxlist(ZhenXing user_zxlist) {
+	public void setUser_zxlist(ZhenXingInfo user_zxlist) {
 		this.user_zxlist = user_zxlist;
 	}
 

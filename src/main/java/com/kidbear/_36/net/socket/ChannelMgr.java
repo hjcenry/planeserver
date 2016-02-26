@@ -43,7 +43,7 @@ public class ChannelMgr {
 	 * @Title: addChannelUser
 	 * @Description: channel管理
 	 * @param ctx
-	 * @param junZhuId
+	 * @param userId
 	 * @return ChannelUser
 	 * @throws
 	 */

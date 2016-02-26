@@ -1,46 +1,47 @@
 package com.kidbear._36.manager.junzhu;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import com.kidbear._36.util.cache.MCSupport;
 
 @Entity
 @Table(name = "JunZhu")
 public class JunZhu implements MCSupport {
-	/**
-	 * @Fields serialVersionUID : TODO
-	 */
+	// id，用户id，用户名字，用户所属国家，用户头像（用数字表示），用户等级，用户vip等级，用户军令数，用户金宝，用户银宝，用户粮食，用户精铁，用户木材，
+	// 用户兵数量，用户军工数，用户将魂数
 	private static final long serialVersionUID = -5385044598250102957L;
-	private String name;// — 用户名
 	@Id
-	private long id;// —用户id
-	private int country;// —用户所属国家 1表示蜀国 2表示魏国 3表示吴国
-	private int headImg;// —用户头像
-	private int level;// —用户等级 —君主等级
-	private int vip;// —用户vip等级
-	private int lingCount;// —用户军令数
-	@Transient
-	private int power;// —战力
-	private int coin;// —用户金币
-	private int acer;// —用户元宝
-	private int food;// —用户粮食
-	private int iron;// —用户精铁
-	private int wood;// —用户木材
-	private int forces;// —用户兵力
-	private int jungong;// —用户军功数
-	private int jianghunNum;// —将魂数量
-	private int curentZx;// —用户的当前阵型
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
+	public long id;// —用户id
+	public String name;// — 用户名
+	public int headImg;// —用户头像
+	public int country;// —用户所属国家 1表示蜀国 2表示魏国 3表示吴国
+	@Column(columnDefinition = "INT default 1")
+	public int level;// —用户等级 —君主等级
+	@Column(columnDefinition = "INT default 0")
+	public int vip;// —用户vip等级
+	@Column(columnDefinition = "INT default 0")
+	public int junling;// —用户军令数
+	@Column(columnDefinition = "INT default 0")
+	public int coin;// —用户金币
+	@Column(columnDefinition = "INT default 0")
+	public int yuanbao;// —用户元宝
+	@Column(columnDefinition = "INT default 0")
+	public int food;// —用户粮食
+	@Column(columnDefinition = "INT default 0")
+	public int iron;// —用户精铁
+	@Column(columnDefinition = "INT default 0")
+	public int wood;// —用户木材
+	@Column(columnDefinition = "INT default 0")
+	public int soldierNum;// —用户兵力
+	@Column(columnDefinition = "INT default 0")
+	public int jungongNum;// —用户军功数
+	@Column(columnDefinition = "INT default 0")
+	public int jianghunNum;// —将魂数量
+	@Column(columnDefinition = "INT default 0")
+	public int zxId;// —阵型id
 
 	public long getId() {
 		return id;
@@ -50,12 +51,12 @@ public class JunZhu implements MCSupport {
 		this.id = id;
 	}
 
-	public int getCountry() {
-		return country;
+	public String getName() {
+		return name;
 	}
 
-	public void setCountry(int country) {
-		this.country = country;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public int getHeadImg() {
@@ -64,6 +65,14 @@ public class JunZhu implements MCSupport {
 
 	public void setHeadImg(int headImg) {
 		this.headImg = headImg;
+	}
+
+	public int getCountry() {
+		return country;
+	}
+
+	public void setCountry(int country) {
+		this.country = country;
 	}
 
 	public int getLevel() {
@@ -82,20 +91,12 @@ public class JunZhu implements MCSupport {
 		this.vip = vip;
 	}
 
-	public int getLingCount() {
-		return lingCount;
+	public int getJunling() {
+		return junling;
 	}
 
-	public void setLingCount(int lingCount) {
-		this.lingCount = lingCount;
-	}
-
-	public int getPower() {
-		return power;
-	}
-
-	public void setPower(int power) {
-		this.power = power;
+	public void setJunling(int junling) {
+		this.junling = junling;
 	}
 
 	public int getCoin() {
@@ -104,14 +105,6 @@ public class JunZhu implements MCSupport {
 
 	public void setCoin(int coin) {
 		this.coin = coin;
-	}
-
-	public int getAcer() {
-		return acer;
-	}
-
-	public void setAcer(int acer) {
-		this.acer = acer;
 	}
 
 	public int getFood() {
@@ -138,20 +131,21 @@ public class JunZhu implements MCSupport {
 		this.wood = wood;
 	}
 
-	public int getForces() {
-		return forces;
+	public int getSoldierNum() {
+		return soldierNum;
 	}
 
-	public void setForces(int forces) {
-		this.forces = forces;
+	public void setSoldierNum(int
+			soldierNum) {
+		this.soldierNum = soldierNum;
 	}
 
-	public int getJungong() {
-		return jungong;
+	public int getJungongNum() {
+		return jungongNum;
 	}
 
-	public void setJungong(int jungong) {
-		this.jungong = jungong;
+	public void setJungongNum(int jungongNum) {
+		this.jungongNum = jungongNum;
 	}
 
 	public int getJianghunNum() {
@@ -162,17 +156,25 @@ public class JunZhu implements MCSupport {
 		this.jianghunNum = jianghunNum;
 	}
 
-	public int getCurentZx() {
-		return curentZx;
-	}
-
-	public void setCurentZx(int curentZx) {
-		this.curentZx = curentZx;
-	}
-
 	@Override
 	public long getIdentifier() {
 		return id;
+	}
+
+	public int getYuanbao() {
+		return yuanbao;
+	}
+
+	public void setYuanbao(int yuanbao) {
+		this.yuanbao = yuanbao;
+	}
+
+	public int getZxId() {
+		return zxId;
+	}
+
+	public void setZxId(int zxId) {
+		this.zxId = zxId;
 	}
 
 }

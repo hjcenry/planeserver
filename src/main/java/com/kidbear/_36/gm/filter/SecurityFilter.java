@@ -32,6 +32,7 @@ public class SecurityFilter implements Filter {
 		extensive.add("route");
 		extensive.add("core");
 		extensive.add("pay");
+		extensive.add("patch");
 	}
 
 	@Override

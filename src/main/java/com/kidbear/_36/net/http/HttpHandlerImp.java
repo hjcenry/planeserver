@@ -12,34 +12,31 @@ import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
-import io.netty.handler.codec.http.QueryStringDecoder;
 import io.netty.handler.codec.http.multipart.Attribute;
 import io.netty.handler.codec.http.multipart.DefaultHttpDataFactory;
 import io.netty.handler.codec.http.multipart.HttpPostRequestDecoder;
 import io.netty.handler.codec.http.multipart.InterfaceHttpData;
 import io.netty.util.CharsetUtil;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.util.List;
-import java.util.Map;
 
 import net.sf.json.JSONObject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.alibaba.fastjson.JSON;
 import com.kidbear._36.core.GameServer;
 import com.kidbear._36.core.Router;
 import com.kidbear._36.util.Constants;
-import com.kidbear._36.util.JsonUtils;
 import com.kidbear._36.util.encrypt.XXTeaCoder;
 
 public class HttpHandlerImp {
 	private static Logger log = LoggerFactory.getLogger(HttpHandlerImp.class);
 	public static String DATA = "data";
-	public static volatile boolean DECODE_SWITCH = false;// 开启解密
-	public static volatile boolean ENCODE_SWITCH = false;// 开启加密
+	public static volatile boolean CODE_DEBUG = false;
 
 	public void channelRead(final ChannelHandlerContext ctx, final Object msg)
 			throws Exception {
@@ -49,7 +46,7 @@ public class HttpHandlerImp {
 				if (!GameServer.shutdown) {// 服务器开启的情况下
 					DefaultFullHttpRequest req = (DefaultFullHttpRequest) msg;
 					if (req.getMethod() == HttpMethod.GET) { // 处理get请求
-						getHandle(ctx, req);
+						getHandle(ctx);
 					}
 					if (req.getMethod() == HttpMethod.POST) { // 处理POST请求
 						postHandle(ctx, req);
@@ -64,53 +61,24 @@ public class HttpHandlerImp {
 		});
 	}
 
-	/**
-	 * @Title: postHandle
-	 * @Description: POST请求处理
-	 * @param ctx
-	 * @param req
-	 *            void
-	 * @throws
-	 */
 	private void postHandle(final ChannelHandlerContext ctx,
 			DefaultFullHttpRequest req) {
 		HttpPostRequestDecoder decoder = new HttpPostRequestDecoder(
 				new DefaultHttpDataFactory(false), req);
-		InterfaceHttpData postGameData = decoder.getBodyHttpData(DATA);
 		try {
-			if (postGameData != null) {
-				String val = ((Attribute) postGameData).getValue();
-				val = decodeFilter(val);
+			InterfaceHttpData data = decoder.getBodyHttpData(DATA);
+			if (data != null) {
+				String val = ((Attribute) data).getValue();
+				val = codeFilter(val);
 				Router.getInstance().route(val, ctx);
 			}
-		} catch (Exception e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return;
 	}
 
-	/**
-	 * @Title: getHandle
-	 * @Description: GET请求处理
-	 * @param ctx
-	 * @param req
-	 *            void
-	 * @throws
-	 */
-	private void getHandle(final ChannelHandlerContext ctx,
-			DefaultFullHttpRequest req) {
-		// QueryStringDecoder decoder = new QueryStringDecoder(req.getUri());
-		// Map<String, List<String>> params = decoder.parameters();
-		// if (params.containsKey(DATA)) {
-		// List<String> list = params.get(DATA);
-		// for (String val : list) {
-		// val = codeFilter(val);
-		// if (Constants.MSG_LOG_DEBUG) {
-		// log.info("server received : {}", val);
-		// }
-		// // Router.getInstance().route(val, ctx);
-		// }
-		// }
+	private void getHandle(final ChannelHandlerContext ctx) {
 		writeJSON(ctx, HttpResponseStatus.NOT_IMPLEMENTED, "not implement");
 	}
 
@@ -118,17 +86,15 @@ public class HttpHandlerImp {
 	 * @Title: codeFilter
 	 * @Description: 编解码过滤
 	 * @param val
-	 * @return String
+	 * @return
+	 * @throws UnsupportedEncodingException
+	 *             String
 	 * @throws
 	 */
-	private String decodeFilter(String val) {
-		try {
-			val = val.contains("%") ? URLDecoder.decode(val, "UTF-8") : val;
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
+	private String codeFilter(String val) throws UnsupportedEncodingException {
+		val = val.contains("%") ? URLDecoder.decode(val, "UTF-8") : val;
 		String valTmp = val;
-		val = DECODE_SWITCH ? XXTeaCoder.decryptBase64StringToString(val,
+		val = CODE_DEBUG ? XXTeaCoder.decryptBase64StringToString(val,
 				XXTeaCoder.key) : val;
 		if (Constants.MSG_LOG_DEBUG) {
 			if (val == null) {
@@ -139,28 +105,29 @@ public class HttpHandlerImp {
 		return val;
 	}
 
-	private static String encodeFilter(String val) {
-		if (ENCODE_SWITCH) {
-			val = ENCODE_SWITCH ? XXTeaCoder.encryptToBase64String(val,
-					XXTeaCoder.key) : val;
-		}
-		return val;
-	}
-
 	public static void writeJSON(ChannelHandlerContext ctx,
 			HttpResponseStatus status, Object msg) {
-		String sentMsg = JsonUtils.objectToJson(msg);
+		String sentMsg = JSON.toJSONString(msg);
 		if (Constants.MSG_LOG_DEBUG) {
 			log.info("server sent : {}", sentMsg);
 		}
-		sentMsg = encodeFilter(sentMsg);
+		sentMsg = CODE_DEBUG ? XXTeaCoder.encryptToBase64String(sentMsg,
+				XXTeaCoder.key) : sentMsg;
 		writeJSON(ctx, status,
 				Unpooled.copiedBuffer(sentMsg, CharsetUtil.UTF_8));
 		ctx.flush();
 	}
 
 	public static void writeJSON(ChannelHandlerContext ctx, Object msg) {
-		writeJSON(ctx, HttpResponseStatus.OK, msg);
+		String sentMsg = JSON.toJSONString(msg);
+		if (Constants.MSG_LOG_DEBUG) {
+			log.info("server sent : {}", sentMsg);
+		}
+		sentMsg = CODE_DEBUG ? XXTeaCoder.encryptToBase64String(sentMsg,
+				XXTeaCoder.key) : sentMsg;
+		writeJSON(ctx, HttpResponseStatus.OK,
+				Unpooled.copiedBuffer(sentMsg, CharsetUtil.UTF_8));
+		ctx.flush();
 	}
 
 	private static void writeJSON(ChannelHandlerContext ctx,
@@ -181,8 +148,6 @@ public class HttpHandlerImp {
 			}
 			// not keep-alive
 			ctx.write(msg).addListener(ChannelFutureListener.CLOSE);
-			boolean f = content.release();
-			System.out.println(f);
 		}
 	}
 

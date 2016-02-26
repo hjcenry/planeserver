@@ -29,7 +29,10 @@ public class MemcachedCRUD {
 
 	public static SockIOPool init(String poolName, String confKey) {
 		// 缓存服务器
-		String cacheServers = GameInit.cfg.getServerByName(confKey);
+		String cacheServers = null;
+		if (GameInit.cfg != null) {
+			cacheServers = GameInit.cfg.getServerByName(confKey);
+		}
 		String server[] = { "123.59.139.220:11211" };
 		if (cacheServers == null || "".equals(cacheServers)) {
 		} else {

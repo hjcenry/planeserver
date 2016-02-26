@@ -9,19 +9,19 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "Mail")
-public class Mail {
+public class MailInfo {
 	@Id
 	private long id;
 	private String title;
 	private int type;
 	@Column(name = "content", columnDefinition = "TEXT")
 	private String content;
-	private String awards;// TODO 奖励，格式暂定
+	private String items;// TODO 奖励，格式暂定
 	private Date sendDate;
 	private String sendName;// 发送人
-	private long receiver;// 接收人
+	private long userid;// 接收人
 	private int isRead;// 是否阅读
-	private int isGiveAward;// 是否领取附件
+	private int isPick;// 是否领取附件
 
 	public long getId() {
 		return id;
@@ -55,14 +55,6 @@ public class Mail {
 		this.content = content;
 	}
 
-	public String getAwards() {
-		return awards;
-	}
-
-	public void setAwards(String awards) {
-		this.awards = awards;
-	}
-
 	public Date getSendDate() {
 		return sendDate;
 	}
@@ -79,14 +71,6 @@ public class Mail {
 		this.sendName = sendName;
 	}
 
-	public long getReceiver() {
-		return receiver;
-	}
-
-	public void setReceiver(long receiver) {
-		this.receiver = receiver;
-	}
-
 	public int getIsRead() {
 		return isRead;
 	}
@@ -95,12 +79,28 @@ public class Mail {
 		this.isRead = isRead;
 	}
 
-	public int getIsGiveAward() {
-		return isGiveAward;
+	public long getUserid() {
+		return userid;
 	}
 
-	public void setIsGiveAward(int isGiveAward) {
-		this.isGiveAward = isGiveAward;
+	public void setUserid(long userid) {
+		this.userid = userid;
+	}
+
+	public String getItems() {
+		return items;
+	}
+
+	public void setItems(String items) {
+		this.items = items;
+	}
+
+	public int getIsPick() {
+		return isPick;
+	}
+
+	public void setIsPick(int isPick) {
+		this.isPick = isPick;
 	}
 
 }
