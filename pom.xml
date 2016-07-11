@@ -3,15 +3,15 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.kidbear</groupId>
-	<artifactId>36</artifactId>
+	<artifactId>plane</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>war</packaging>
-	<name>36</name>
+	<name>plane</name>
 
 	<repositories>
 		<repository>
 			<id>spy</id>
-			<name>36</name>
+			<name>plane</name>
 			<layout>default</layout>
 			<url>http://files.couchbase.com/maven2/</url>
 			<snapshots>
@@ -254,7 +254,21 @@
 		<dependency>
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-redis</artifactId>
-			<version>1.0.2.RELEASE</version>
+			<version>1.7.1.RELEASE</version>
+		</dependency>
+
+		<!-- <dependency> <groupId>org.apache.commons</groupId> <artifactId>commons-pool2</artifactId> 
+			<version>2.4.2</version> </dependency> -->
+		<dependency>
+			<groupId>commons-pool</groupId>
+			<artifactId>commons-pool</artifactId>
+			<version>1.6</version>
+		</dependency>
+
+		<dependency>
+			<groupId>redis.clients</groupId>
+			<artifactId>jedis</artifactId>
+			<version>2.8.1</version>
 		</dependency>
 
 		<dependency>
@@ -388,6 +402,80 @@
 			<artifactId>memcached</artifactId>
 			<version>2.5.3</version>
 		</dependency>
+		<!-- jsonrpc4j -->
+		<dependency>
+			<groupId>com.github.briandilley.jsonrpc4j</groupId>
+			<artifactId>jsonrpc4j</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<!-- jsonrpc4j依赖的包 -->
+		<!-- <dependency> <groupId>com.fasterxml.jackson.core</groupId> <artifactId>jackson-annotations</artifactId> 
+			<version>2.0.2</version> </dependency> -->
+		<dependency>
+			<groupId>javax.portlet</groupId>
+			<artifactId>portlet-api</artifactId>
+			<version>2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpcore-nio</artifactId>
+			<version>4.2.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jmock</groupId>
+			<artifactId>jmock-junit4</artifactId>
+			<version>2.5.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jmock</groupId>
+			<artifactId>jmock</artifactId>
+			<version>2.5.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-server</artifactId>
+			<version>9.0.0.RC0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-servlet</artifactId>
+			<version>9.0.0.RC0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.ow2.chameleon.fuchsia.base.json-rpc</groupId>
+			<artifactId>org.ow2.chameleon.fuchsia.base.json-rpc.json-rpc-bundle</artifactId>
+			<version>0.0.2</version>
+		</dependency>
+		<!-- motan rpc -->
+		<dependency>
+			<groupId>com.weibo</groupId>
+			<artifactId>motan-core</artifactId>
+			<version>0.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>com.weibo</groupId>
+			<artifactId>motan-transport-netty</artifactId>
+			<version>0.0.1</version>
+		</dependency>
+		<!-- 集群相关 -->
+		<!-- consul -->
+		<dependency>
+			<groupId>com.weibo</groupId>
+			<artifactId>motan-registry-consul</artifactId>
+			<version>0.0.1</version>
+		</dependency>
+		<!-- zookeeper -->
+		<dependency>
+			<groupId>com.weibo</groupId>
+			<artifactId>motan-registry-zookeeper</artifactId>
+			<version>0.0.1</version>
+		</dependency>
+		<!-- dependencies blow were only needed for spring-based features -->
+		<dependency>
+			<groupId>com.weibo</groupId>
+			<artifactId>motan-springsupport</artifactId>
+			<version>0.0.1</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
@@ -406,10 +494,10 @@
 				<artifactId>tomcat-maven-plugin</artifactId>
 				<version>1.1</version>
 				<configuration>
-					<url>http://123.59.139.220:8091/manager</url>
+					<url>http://123.59.110.201:9090/manager</url>
 					<username>kidbear</username>
 					<password>kidbear123321</password>
-					<path>/36</path>
+					<path>/plane</path>
 				</configuration>
 				<executions>
 					<execution>
@@ -423,5 +511,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
 </project>

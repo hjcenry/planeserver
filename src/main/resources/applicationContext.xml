@@ -4,10 +4,5 @@
 
 	<description>导入applicationContext文件列表</description>
 	<import resource="classpath*:spring-conf/applicationContext.xml" />
-	<!-- <import resource="classpath*:spring-cache/applicationContext-memcached.xml" /> -->
-	<!-- <import resource="classpath*:spring-redis/applicationContext-redis.xml" /> -->
-	<!-- <import resource="classpath*:spring-email/applicationContext-email.xml"/> -->
-	<!-- <import resource="classpath*:spring-servlet/servlet-context.xml"/> -->
-	<!-- <import resource="classpath*:spring-cxf/cxf-servlet.xml"/> -->
-	<!-- <import resource="classpath*:spring-cxf/cxf-client.xml"/> -->
+	<!-- <import resource="classpath*:spring-motan/motan_client.xml" /> -->
 </beans>

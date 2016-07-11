@@ -50,7 +50,7 @@
 		<property name="dataSource" ref="dataSource" /> </bean> -->
 	<!-- enable component scanning (beware that this does not enable mapper 
 		scanning!) -->
-	<context:component-scan base-package="com.kidbear._36" />
+	<context:component-scan base-package="com.kidbear.plane" />
 	<!-- enable autowire -->
 	<context:annotation-config />
 	<!-- enable transaction demarcation with annotations -->
@@ -116,9 +116,9 @@
 				<!-- 设置自动创建|更新|验证数据库表结构 -->
 				hibernate.hbm2ddl.auto=update
 				<!-- 是否在控制台显示sql -->
-				hibernate.show_sql=true
+				hibernate.show_sql=false
 				<!-- 是否格式化sql，优化显示 -->
-				hibernate.format_sql=true
+				hibernate.format_sql=false
 				<!-- 是否开启二级缓存 -->
 				hibernate.cache.use_second_level_cache=false
 				<!-- 是否开启查询缓存 -->
@@ -139,6 +139,6 @@
 			</value>
 		</property>
 		<!-- 自动扫描实体对象 tdxy.bean的包结构中存放实体类 -->
-		<property name="packagesToScan" value="com.kidbear._36" />
+		<property name="packagesToScan" value="com.kidbear.plane" />
 	</bean>
 </beans>

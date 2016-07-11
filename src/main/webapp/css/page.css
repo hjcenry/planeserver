@@ -1,4 +1,31 @@
 @charset "UTF-8";
+.page, .pageBtn {
+	display: inline-block;
+	width: 30px;
+	height: 30px;
+	line-height: 30px;
+	text-align: center;
+	cursor: pointer;
+}
+
+.page {
+	opacity: 0.2;
+	background-color: grey;
+}
+
+.pageBtn {
+	opacity: 0.8;
+	background-color: grey;
+}
+
+.page:hover, .pageBtn:hover {
+	opacity: 1.0;
+}
+
+.selected {
+	opacity: 1.0
+}
+
 
 .container{
 	width: 98%;
